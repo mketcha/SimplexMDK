@@ -66,15 +66,23 @@ VertexClassCount <- function(PI_1xk, n){
 
 # generate random class vertex assignments given probabilities and number of vertices
 generateZ_nxk <- function(PI_1xk, n){
-  r <- runif(n);
-  Z_n <- rep(0,n)
-  PI_c = c(0,cumsum(PI_1xk));
-  for (i in 1:(length(PI_c)-1)){
-    Z_n[r>=PI_c[i] & r<PI_c[i+1]] = i;
+#   r <- runif(n);
+#   Z_n <- rep(0,n)
+#   PI_c = c(0,cumsum(PI_1xk));
+#   for (i in 1:(length(PI_c)-1)){
+#     Z_n[r>=PI_c[i] & r<PI_c[i+1]] = i;
+#   }
+#   Z_nxk <- matrix(0, n, length(PI_1xk));
+#   for (i in 1:length(Z_n)) {
+#     Z_nxk[i,Z_n[i]] = 1;
+#   }
+#   return(Z_nxk)
+  VCC <- VertexClassCount(PI_1xk, n);
+  Z <- matrix(0, n, length(VCC));
+  count = 1;
+  for (i in 1:length(VCC)){
+    Z[count:(count+VCC[i]-1),i] <-1;
+    count <- count+VCC[i]
   }
-  Z_nxk <- matrix(0, n, length(PI_1xk));
-  for (i in 1:length(Z_n)) {
-    Z_nxk[i,Z_n[i]] = 1;
-  }
-  return(Z_nxk)
+  return(Z);
 }

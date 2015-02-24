@@ -24,6 +24,7 @@ generateDirilechtSBM <- function(B, PI, n, r, opt = igraph.arpack.default) {
   }
   xDir <- do.call(rbind,xDir);
   P <- xDir %*% t(xDir);
+  diag(P) <-0;
   return(P)
 }
 
@@ -33,10 +34,18 @@ generateDirilechtSBM <- function(B, PI, n, r, opt = igraph.arpack.default) {
 # Return: BASE-> ASE of B matrix
 generateDirilechtBASE <- function(B, opt = igraph.arpack.default){
   k <- dim(B)[1];
-  BASE <- spectEmbed(B,k, opt)
-  optimOpt  = list( outer.iter= 10000, inner.iter = 10000)
-  rot <- nloptr(as.vector(diag(k)), eval_f = diriOpti, lb = as.vector(-matrix(1,k,k)), ub = as.vector(matrix(1,k,k)), eval_g_ineq = diriIneq, eval_g_eq = diriEq, opts = list(algorithm = "NLOPT_GN_ISRES", maxeval = 10000), nVertex = k, dimLatentPosition = k, xHatTmp = as.vector(BASE$X));
-  BASE$X <- BASE$X %*% matrix(rot$solution,k,k);
+  repeat{
+    BASE <- spectEmbed(B,k, opt)
+    optimOpt  = list( outer.iter= 10000, inner.iter = 10000)
+    rot <- nloptr(as.vector(diag(k)), eval_f = diriOpti, lb = as.vector(-matrix(1,k,k)), ub = as.vector(matrix(1,k,k)), eval_g_ineq = diriIneq, eval_g_eq = diriEq, opts = list(algorithm = "NLOPT_GN_ISRES", maxeval = 10000), nVertex = k, dimLatentPosition = k, xHatTmp = as.vector(BASE$X));
+    BASE$X <- BASE$X %*% matrix(rot$solution,k,k);
+    
+    d_graph <- generateDirilechtSBM_BASE( BASE, rep(1/k,k), 100, 500);
+    if (sum(is.na(d_graph$xDir)) == 0) {
+      break
+    }
+    print("err_BASE")
+  }
   return(BASE)
 }
 
@@ -58,7 +67,8 @@ generateDirilechtSBM_BASE <- function(BASE, PI, n, r) {
   }
   xDir <- do.call(rbind,xDir);
   P <- xDir %*% t(xDir);
-  return(list(P = P, nVec = nVec))
+  diag(P) <-0;
+  return(list(P = P, nVec = nVec, xDir = xDir))
 }
 
 # function: generate Dirilecht RV
