@@ -1,0 +1,333 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{amssymb}
+
+\title{Robust Estimation of Edge Probability Matrix for Independent Edge Poisson Multigraph Model}
+
+\author{Runze}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+
+\section{Problem Description}
+\subsection{Uncontaminated Model}
+First consider the independent edge Poisson multigraph stochastic blockmodel in the RDPG setting.
+Let $\mathcal{S} \subset \mathbb{R}^d$ be a set such that $x, y \in \mathcal{S}$ implies $\left \langle x, y \right \rangle \in [0, 1]$. Let the probability vector $\pi \in (0, 1)^K$ satisfies $\sum_{k=1}^K \pi_k = 1$ and the distinct latent positions are represented by $\nu = [\nu_1 | \cdots | \nu_K]^T \in \mathbb{R}^{K \times d}$, where $\nu_k \in \mathcal{S}$ for $1 \le k \le K$. Then $X_i \stackrel{iid}{\sim} \sum_k \pi_k \delta_{\nu_k}$, which are combination of $K$ point masses at $\nu_k$, are the latent positions in the Poisson o SBM o RDPG model. Define $X = [X_1|\cdots |X_n]^T$. So the edge probability matrix $P$ for independent edge Poisson multigraph model is $P = X \cdot X^T$. And the multigraph $A \sim Poisson(P)$.
+
+\noindent \textbf{Remark}: In our definition, $P$ is always between 0 and 1. We might extend this later.
+
+\subsection{Contaminated Model}
+Now we consider the current model under contamination. Assume each vertex is independently to be contaminated with probability $\epsilon$. The latent position $X_i$ associated with the contaminated vertex $i$ follows a uniform distribution of the scaled feasible region $c \cdot \mathcal{S}$. Equivalently, we could write
+$X_i \stackrel{iid}{\sim} (1 - \epsilon) \cdot \sum_{k = 1}^K \pi_k \delta_{\nu_k} + \epsilon \cdot \mathcal{U}\left( c \cdot \mathcal{S} \right)$. Thus we can first sample $m$ independent latent positions $X^{(t)} = [X_1^{(t)}|\cdots|X_n^{(t)}]^T$, $t = 1, \cdots, m$, and then sample $m$ multigraphs $A^{(t)} \sim Poisson(P^{(t)})$, $t = 1, \cdots, m$, where $P^{(t)} = X^{(t)} X^{(t)T}$.
+
+\subsection{Simplifications}
+Our goal is to get a good estimation of original edge probability matrix $P^*$ without contamination by using $m$ multigraphs $A_t$. We make some simplifications so that 
+the theme of this draft will NOT be distracted by finding vertex correspondence:
+\begin{itemize}
+\item The sizes of the blocks are fixed. \\
+Define $\tau_i$ as the block to which vertex $i$ belongs. So the size of block $k$ is $n_k = \sum_{i=1}^n \mathbb{I} \{ \tau_i = k\}$. We will set $n_k = \pi_k n$, where $n$ is the number of vertices in the graph. ($n_k$ are not necessarily to be integers, but let's say they are for now.)
+
+\item We assume the vertex correspondence is known.\\
+Without loss of generality, let the vertices be arranged in block id order. Thus $\tau^* = [1, 1, \cdots, 1, 2, 2, \cdots, K-1, K, K, \cdots, K]$.
+\end{itemize}
+
+In order to satisfy the simplifications above, we need to change the problem a little bit as following:
+For every replicate, 
+\begin{enumerate}
+\item Sample $\tau_i \stackrel{iid}{\sim} \text{Multinomial} (1, \boldsymbol{\pi}) $ for $1 \le i \le n$;
+\item Sample $X_i^{(t)} | \tau_i \stackrel{iid}{\sim} (1 - \epsilon) \delta_{\nu_{\tau_i}} + \epsilon \cdot \mathcal{U}\left( c \cdot \mathcal{S} \right)$ for $1 \le i \le n$, $1 \le t \le m$;
+\item Sample $m$ multigraphs $A^{(t)} | P^{(t)} \sim Poisson(P^{(t)})$, $t = 1, \cdots, m$, where $P^{(t)} = X^{(t)} X^{(t)T}$, $X^{(t)} = [X_1^{(t)}|\cdots|X_n^{(t)}]^T$.
+\end{enumerate}
+
+
+
+\subsection{Goal}
+Now let's restate our goal under the simplifications: we would like to use the $m$ multigraphs $A^{(t)}$ to find a good estimation of the uncontaminated edge probability matrix $P^* = X^* X^{*T}$, where $X^*_i = \nu_{\tau^*_i}$.
+
+
+
+
+
+
+\section{Robust Estimation}
+
+Let's consider the following way:
+\begin{enumerate}
+\item Get an estimated matrix $\widehat{A}(A^{(1)}, \cdots, A^{(m)})$;
+\item Get the estimated latent positions $\widehat{X}$ based on ASE of $\widehat{A}$;
+\item Our estimation of $P^*$ is $\widehat{P} = \widehat{X} \widehat{X}^T$.
+\end{enumerate}
+
+We are interested in different choices of $\widehat{A}$.
+
+\subsection{Mean}
+
+Simply $\widehat{A}(A^{(1)}, \cdots, A^{(m)}) = \frac{1}{m} \sum_{t = 1}^m A^{(t)}$.
+
+\subsection{Hodges-Lehmann Estimator}
+
+\begin{enumerate}
+\item Calculate the average of $m(m+1)/2$ pairs of graphs,
+$B^{(i,j)} = \left( A^{(i)} + A^{(j)}\right)/2$ for $1 \le i \le j \le m$;
+\item $\widehat{A}(A^{(1)}, \cdots, A^{(m)}) = \text{median}_{1 \le i \le j \le m} B^{(i,j)}$.
+\end{enumerate}
+
+
+
+\section{Properties}
+
+$\mathcal{S}$ is difficult to handle with, so we assume
+$X_i^{(t)} | \tau_i \stackrel{iid}{\sim} (1 - \epsilon) \delta_{\nu_{\tau_i}} + \epsilon \cdot \mathcal{U}\left( c \cdot \mathcal{T} \right)$ with $\tau_i \stackrel{iid}{\sim} \text{Multinomial} (1, \boldsymbol{\pi}) $ for $1 \le i \le n$, $1 \le t \le m$, where $\mathcal{T}$ is a unit hyper cube.
+
+
+\subsection{Mean}
+
+\subsubsection{Expectation}
+
+Define
+\[
+	\mu_1(\epsilon, c) = E [ X_i ] = E [ E[ X_i | \tau_i ] ] = (1 - \epsilon) \cdot \sum_{k = 1}^K \pi_k \nu_k + \epsilon \cdot \frac{c}{2} \cdot \boldsymbol{1_d},
+\]
+\[
+	\mu_2(\epsilon, c) = E[X_i X_i^T] = E[ E[ X_i X_i^T |\tau_i ]] = (1 - \epsilon) \cdot \sum_{k = 1}^K \pi_k \nu_k \nu_k^T
++ \epsilon \cdot \frac{c^2}{4} \cdot \boldsymbol{1_d} \boldsymbol{1_d}^T,
+\]
+\[
+	\alpha(\epsilon, c) = \text{trace} \left( \mu_2(\epsilon, c) \right)
+    = (1 - \epsilon) \cdot \sum_{k = 1}^K \pi_k \nu_k^T \nu_k
++ \epsilon \cdot \frac{c^2}{4} \cdot d.
+\]
+
+$\tau$ doesn't contain any information about the noise. So we define a new random vector $Z \sim \tau \cdot \text{Bernoulli} \left(1 - \epsilon \right)$, which indicates the label. Let $Z_i = 0$ represents $X_i$ comes from the uniform distribution, while $Z_i = k$ represents $X_i$ comes from block $k$ when $1 \le k \le K$.
+
+Thus
+\begin{align*}
+	& E\left[ \bar{A} | \tau \right] = E \left[ E \left[ \bar{A} | \tau, P^{(1)}, \cdots, P^{(m)} \right] |\tau \right] \\
+    = & E \left[ \frac{1}{m} \sum_{t=1}^m P^{(t)} | \tau \right] = E[P^{(1)}|\tau] = E \left[ X X^T | \tau \right] \\
+    = & E \left[ E \left[ X X^T | Z, \tau \right] | \tau \right]
+    = E \left[ \left( E \left[ X_i^T X_j | Z, \tau \right] \right)_{ij} | \tau \right] \\
+    = & \left( E \left[  E \left[ X_i^T X_j | Z, \tau \right] | \tau \right] \right)_{ij} \\
+    = & \left( E \left[ X_i^T X_j | Z_i = \tau_i, Z_j = \tau_j, \tau_i, \tau_j \right] P \left( Z_i = \tau_i | \tau_i \right) P \left( Z_j = \tau_j | \tau_j \right)
+\mathbb{I}_{\{ i \ne j\}} \right)_{ij}  \\
+    & + \left( E \left[ X_i^T X_j | Z_i = \tau_i, Z_j = 0, \tau_i, \tau_j \right] P \left( Z_i = \tau_i | \tau_i \right) P \left( Z_j = 0 | \tau_j \right) \mathbb{I}_{\{ i \ne j\}} \right)_{ij} \\
+    & + \left( E \left[ X_i^T X_j | Z_i = 0, Z_j = \tau_j, \tau_i, \tau_j \right] P \left( Z_i = 0 | \tau_i \right) P \left( Z_j = \tau_j | \tau_j \right) \mathbb{I}_{\{ i \ne j\}} \right)_{ij} \\
+    & + \left( E \left[ X_i^T X_j | Z_i = 0, Z_j = 0, \tau_i, \tau_j \right] P \left( Z_i = 0 | \tau_i \right) P \left( Z_j = 0 | \tau_j \right) \mathbb{I}_{\{ i \ne j\}} \right)_{ij} \\
+    & + \left( E \left[ X_i^T X_i | Z_i = \tau_i, \tau_i \right] P \left( Z_i = \tau_i | \tau_i \right) \mathbb{I}_{\{ i = j\}} \right)_{ij}\\
+    & + \left( E \left[ X_i^T X_i | Z_i = 0, \tau_i \right] P \left( Z_i = 0 | \tau_i \right) \mathbb{I}_{\{ i = j\}} \right)_{ij}\\
+    = & \left( \left( \nu_{\tau_i}^T \nu_{\tau_j} (1-\epsilon)^2 + \frac{1}{2} c \nu_{\tau_i}^T \boldsymbol{1_d} \epsilon (1-\epsilon) + \frac{1}{2} c \nu_{\tau_j}^T \boldsymbol{1_d} \epsilon(1-\epsilon) + \frac{d}{4} c^2 \epsilon^2 \right) \mathbb{I}_{\{ i \ne j\}} \right)_{ij} \\
+    & + \left( \left( \nu_{\tau_i}^T \nu_{\tau_i} (1-\epsilon) + \frac{d}{3} c^2 \epsilon \right) \mathbb{I}_{\{ i = j\}} \right)_{ij}
+\end{align*}
+So the unconditional expectation is
+\begin{align*}
+	& E \left[ \bar{A} \right] = E \left[ E \left[ \bar{A} | \tau \right] \right] \\
+    = & \left( \epsilon \frac{c^2}{12} d + \alpha(\epsilon, c) - \mu_1(\epsilon, c)^T \mu_1(\epsilon, c) \right) I_n + \mu_1(\epsilon, c)^T \mu_1(\epsilon, c) J_n
+\end{align*}
+i.e.
+\[
+    E \left[ \bar{A}_{ij} \right] = \left\{
+    \begin{array}{l l}
+        \epsilon \frac{c^2}{12} d + \alpha(\epsilon, c) & \quad \text{if $i = j$}\\
+        \mu_1(\epsilon, c)^T \mu_1(\epsilon, c) & \quad \text{otherwise}
+    \end{array}
+    \right.
+\]
+
+\subsubsection{Variance}
+\begin{align*}
+	Var \left[ \bar{A}_{ij} \right] = & E \left[ Var \left[ \bar{A}_{ij} | P^{(1)}, \cdots, P^{(m)} \right] \right] + Var \left( E \left[ \bar{A}_{ij} | P^{(1)}, \cdots, P^{(m)} \right] \right)
+\end{align*}
+
+$E\left[ X_i |\tau_i \right] = (1-\epsilon) \nu_{\tau_i} + \epsilon \frac{c}{2} \boldsymbol{1_d}$
+
+Define $\beta_k = (1-\epsilon) \nu_k + \epsilon \frac{c}{2} \boldsymbol{1_d}$.
+
+$E\left[ \left( X_i^{(t)T} X_j^{(t)} \right)^2 | Z_i=0, Z_j=0 \right] = d(9d+7)c^4/144$;
+
+$E\left[ \left( X_i^{(t)T} X_j^{(t)} \right)^2 | Z_i=0, Z_j=\tau_j \right] =
+\left[ 3 \left( \nu_{\tau_j}^T \boldsymbol{1_d} \right)^2 + \nu_{\tau_j}^T \nu_{\tau_j} \right] c^2/12$;
+
+$E\left[ \left( X_i^{(t)T} X_j^{(t)} \right)^2 | Z_i=\tau_i, Z_j=\tau_j \right] =
+\left( \nu_{\tau_i}^T \nu_{\tau_j} \right)^2 $;
+
+Define
+\begin{align*}
+	\Gamma = & E \left[ E\left[ \left( X_i^{(t)T} X_j^{(t)} \right)^2 | Z_i, Z_j \right]\right] \\
+    = & \epsilon^2 E\left[ \left( X_i^{(t)T} X_j^{(t)} \right)^2 | Z_i=0, Z_j=0 \right] \\
+    & + 2 \epsilon (1-\epsilon) \sum_{\tau_j = 1}^K \pi_{\tau_j} E\left[ \left( X_i^{(t)T} X_j^{(t)} \right)^2 | Z_i=0, Z_j=\tau_j \right] \\
+    & + (1-\epsilon)^2 \sum_{\tau_i=1}^K \sum_{\tau_j=1}^K \pi_{\tau_i} \pi_{\tau_j} E\left[ \left( X_i^{(t)T} X_j^{(t)} \right)^2 | Z_i=\tau_i, Z_j=\tau_j \right] \\
+    = & \epsilon^2 d(9d+7)c^4/144
+    + 2 \epsilon (1-\epsilon) \sum_{\tau_j = 1}^K \pi_{\tau_j} \left[ 3 \left( \nu_{\tau_j}^T \boldsymbol{1_d} \right)^2 + \nu_{\tau_j}^T \nu_{\tau_j} \right] c^2/12 \\
+    & + (1-\epsilon)^2 \sum_{\tau_i=1}^K \sum_{\tau_j=1}^K \pi_{\tau_i} \pi_{\tau_j} \left( \nu_{\tau_i}^T \nu_{\tau_j} \right)^2
+\end{align*}
+
+\begin{align*}
+	& Var \left( P_{ij}^{(t)} \right) \\
+    = & E \left[ \left( X_i^{(t)T} X_j^{(t)} \right)^2 \right]
+      - \left( E \left[ X_i^{(t)T} X_j^{(t)} \right]\right)^2 \\
+    = & E \left[ E\left[ \left( X_i^{(t)T} X_j^{(t)} \right)^2 | Z_i, Z_j \right]\right] - E[\bar{A}]_{ij}^2 \\
+    = & \Gamma - E[\bar{A}]_{ij}^2
+\end{align*}
+
+
+\begin{align*}
+	& Cov \left( P_{ij}^{(t_1)}, P_{ij}^{(t_2)} \right) \\
+    = & E \left[ X_i^{(t_1)T} X_j^{(t_1)} X_i^{(t_2)T} X_j^{(t_2)} \right]
+      - E \left[ X_i^{(t_1)T} X_j^{(t_1)} \right] E \left[ X_i^{(t_2)T} X_j^{(t_2)} \right]\\
+    = & E \left[ E\left[ X_i^{(t_1)T} X_j^{(t_1)} X_i^{(t_2)T} X_j^{(t_2)} | \tau_i, \tau_j \right]\right] - E[\bar{A}]_{ij}^2\\
+    = & E \left[ \left( E\left[ X_i^{(t_1)T} X_j^{(t_1)} | \tau_i, \tau_j \right] \right)^2 \right] - E[\bar{A}]_{ij}^2\\
+    = & E \left[ \left( E\left[ X_i^{(t_1)} | \tau_i\right]^T E\left[ X_j^{(t_1)} | \tau_j \right] \right)^2 \right] - E[\bar{A}]_{ij}^2\\
+    = & \sum_{\tau_i = 1}^K \sum_{\tau_j = 1}^K \pi_{\tau_i} \pi_{\tau_j}
+    \left( \left[ (1-\epsilon) \nu_{\tau_i} + \epsilon \frac{c}{2} \boldsymbol{1_d} \right]^T \left[ (1-\epsilon) \nu_{\tau_j} + \epsilon \frac{c}{2} \boldsymbol{1_d} \right] \right)^2 - E[\bar{A}]_{ij}^2 \\
+    = & \sum_{\tau_i = 1}^K \sum_{\tau_j = 1}^K \pi_{\tau_i} \pi_{\tau_j} \left( \beta_{\tau_i}^T \beta_{\tau_j} \right)^2 - E[\bar{A}]_{ij}^2
+\end{align*}
+
+\begin{align*}
+    & Var \left( E \left[ \bar{A}_{ij} | P^{(1)}, \cdots, P^{(m)} \right] \right) \\
+    = & Var \left( \frac{1}{m} \sum_{t=1}^m P_{ij}^{(t)} \right)\\
+    = & \frac{1}{m^2} \sum_{t_1=1}^m \sum_{t_2=1}^m Cov \left( P_{ij}^{(t_1)}, P_{ij}^{(t_2)} \right) \\
+    = & \frac{1}{m} Var \left( P_{ij}^{(1)} \right) + \frac{m-1}{m} Cov \left( P_{ij}^{(1)}, P_{ij}^{(2)} \right) \\
+    = & \frac{1}{m} \Gamma + \frac{m-1}{m} \left( \sum_{\tau_i = 1}^K \sum_{\tau_j = 1}^K \pi_{\tau_i} \pi_{\tau_j} \left( \beta_{\tau_i}^T \beta_{\tau_j} \right)^2 \right) - E[\bar{A}]_{ij}^2
+\end{align*}
+
+
+\begin{align*}
+    & Var \left( \bar{A}_{ij} | P^{(1)}, \cdots, P^{(m)} \right) \\
+    = & Var \left( \frac{1}{m} \sum_{t=1}^m A_{ij}^{(t)} | P^{(1)}, \cdots, P^{(m)} \right) \\
+    = & \frac{1}{m^2} \sum_{t=1}^m Var \left( A_{ij}^{(t)} | P^{(t)} \right) \\
+    = & \frac{1}{m^2} \sum_{t=1}^m P_{ij}^{(t)}
+\end{align*}
+
+\begin{align*}
+    & E \left[ Var \left( \bar{A}_{ij} | P^{(1)}, \cdots, P^{(m)} \right) \right] \\
+    = & E \left[ \frac{1}{m^2} \sum_{t=1}^m P_{ij}^{(t)} \right] \\
+    = & \frac{1}{m} E \left[ P_{ij}^{(1)} \right] \\
+    = & \frac{1}{m} E \left[ \bar{A}_{ij} \right]
+\end{align*}
+
+Thus
+\begin{align*}
+	Var \left[ \bar{A}_{ij} \right] = & \frac{1}{m} E \left[ \bar{A}_{ij} \right] + 
+    \frac{1}{m} \Gamma + \frac{m-1}{m} \left( \sum_{\tau_i = 1}^K \sum_{\tau_j = 1}^K \pi_{\tau_i} \pi_{\tau_j} \left( \beta_{\tau_i}^T \beta_{\tau_j} \right)^2 \right) - E[\bar{A}]_{ij}^2
+\end{align*}
+
+\subsubsection{Limiting Distribution}
+Condition on $\tau_i$ and $\tau_j$, $A_{ij}^{(t)}$ are i.i.d. for $1 \le t \le m$. By CLT, we have
+\[
+	\sqrt{m} \bar{A}_{ij} | \tau_i, \tau_j \stackrel{\mathcal{L}}{\rightarrow} \mathcal{N} \left( E \left[ A_{ij} | \tau_i, \tau_j\right], Var \left( A_{ij} | \tau_i, \tau_j\right) \right)
+\]
+as $m \rightarrow \infty$.
+
+So the unconditional distribution of $\sqrt{m} \bar{A}_{ij}$
+\[
+	\sqrt{m} \bar{A}_{ij} \stackrel{\mathcal{L}}{\rightarrow} \sum_{k_i = 1}^K \sum_{k_j = 1}^K \pi_{k_i} \pi_{k_j} \mathcal{N} \left( E \left[ A_{ij} | \tau_i=k_i, \tau_j=k_j\right], Var \left( A_{ij} | \tau_i=k_i, \tau_j=k_j\right) \right)
+\]
+as $m \rightarrow \infty$.
+
+
+
+
+
+
+
+\subsection{Hodges-Lehmann Estimator}
+
+\subsubsection{Expectation}
+
+
+
+
+\subsubsection{Variance}
+
+\subsubsection{Limiting Distribution}
+
+
+
+
+
+
+
+\subsection{Asymptotic Relative Efficiency}
+
+\begin{align*}
+	& \text{ARE}(\epsilon, c, i, j) =  \lim_{m \rightarrow \infty}
+    \frac{Var(\bar{A}_{ij})/\left( E[\bar{A}_{ij}] \right)^2}{Var(\hat{A}_{ij})/\left( E[\hat{A}_{ij}] \right)^2}
+\end{align*}
+
+
+
+
+
+
+
+
+\section{Simulations}
+
+We consider a 3-block model with $n = 150$ vertices and $\pi_1 = \pi_2 = \pi_3 = 1/3$. By our simplification, $n_1 = n_2 = n_3 = 50$. The latent positions of the blocks $\nu$ satisfy $B = (0.5 - \epsilon_B) J + 2 \epsilon_B I = \nu \nu^T$.
+
+See tables for the results under different settings. Table \ref{tab:result0} is the base case; Table \ref{tab:result1} changes the probability of contamination $\epsilon$; Table \ref{tab:result2} changes the $B$ matrix; Table \ref{tab:result3} changes the ``signal'' of the contamination.
+
+From the results, we can see that Hodges-Lehmann estimation performs better than the average, both in estimation of $P^*$ and in estimation of $\tau^*$.
+
+
+\newpage
+
+\begin{table}
+\centering
+\begin{tabular}{c|c|c|c}
+& $\bar{A}$ & $A_{HL}$ & $H_A: A_{HL} < \bar{A}$ \\\hline
+Mean of Error Rates for $\widehat{\tau}$ & 0.5614 & 0.5052 & \\
+$p$-Value of sign test & & & $2.17 \times 10^{-9}$ \\\hline
+Mean of $\|\hat{X}\hat{X}^T - P^*\|$ & 40.07 & 20.28 & \\
+$p$-Value of sign test & & & $ < 10^{-16}$\\
+\end{tabular}
+\caption{\label{tab:result0}$\epsilon = 0.2$, $\epsilon_B = 0.05$, $c = 2$, $m = 10$, 100 replicates.}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{c|c|c|c}
+& $\bar{A}$ & $A_{HL}$ & $H_A: A_{HL} < \bar{A}$ \\\hline
+Mean of Error Rates for $\widehat{\tau}$ & 0.4918 & 0.4620 & \\
+$p$-Value of sign test & & & 0.0176 \\\hline
+Mean of $\|\hat{X}\hat{X}^T - P^*\|$ & 19.15 & 13.93 & \\
+$p$-Value of sign test & & & $ < 10^{-16}$\\
+\end{tabular}
+\caption{\label{tab:result1}$\epsilon = 0.1$, $\epsilon_B = 0.05$, $c = 2$, $m = 10$, 100 replicates.}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{c|c|c|c}
+& $\bar{A}$ & $A_{HL}$ & $H_A: A_{HL} < \bar{A}$ \\\hline
+Mean of Error Rates for $\widehat{\tau}$ & 0.3524 & 0.1809 & \\
+$p$-Value of sign test & & & $< 10^{-16}$ \\\hline
+Mean of $\|\hat{X}\hat{X}^T - P^*\|$ & 40.77 & 20.10 & \\
+$p$-Value of sign test & & & $ < 10^{-16}$\\
+\end{tabular}
+\caption{\label{tab:result2}$\epsilon = 0.2$, $\epsilon_B = 0.1$, $c = 2$, $m = 10$, 100 replicates.}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{c|c|c|c}
+& $\bar{A}$ & $A_{HL}$ & $H_A: A_{HL} < \bar{A}$ \\\hline
+Mean of Error Rates for $\widehat{\tau}$ & 0.6129 & 0.5238 & \\
+$p$-Value of sign test & & & $5.58 \times 10^{-10}$ \\\hline
+Mean of $\|\hat{X}\hat{X}^T - P^*\|$ & 217.43 & 98.05 & \\
+$p$-Value of sign test & & & $ < 10^{-16}$\\
+\end{tabular}
+\caption{\label{tab:result3}$\epsilon = 0.2$, $\epsilon_B = 0.05$, $c = 5$, $m = 10$, 100 replicates.}
+\end{table}
+
+
+
+\end{document}

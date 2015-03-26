@@ -23,8 +23,37 @@ P2Adj <- function( P, undirected = TRUE, hollow = TRUE) {
   return(A)
 }
 
-# ASE of a matrix, given number of eigenvalues to calculate
-spectEmbed <- function(M,no, opt = igraph.arpack.default) {
+# P2Adj <- function( P, undirected = TRUE, hollow = TRUE) {
+#   d = dim(P);
+#   if (!undirected){
+#     P_vect <- as.vector(P)
+#     bino <- rbinom(length(P_vect), 1, P_vect);
+#     bino <- matrix(bino,d);
+#     if(hollow){
+#       diag(bino) <- 0;
+#     }
+#     return(bino)
+#   }
+#   #bino <- upper.tri(bino, TRUE)*bino;
+#   P_vect <- P[upper.tri(P,TRUE)];
+#   bino <- rbinom(length(P_vect), 1, P_vect);
+#   A <- matrix(0,d,d);
+#   A[upper.tri(A,TRUE)] <- bino;
+#   A <- A+t(A);
+#   #A <- symMatrix(bino,d[1], byrow=TRUE)
+#   if (hollow){
+#     diag(A) <- 0;
+#   } else {
+#     diag(A) <- diag(A)/2;
+#   }
+#   return(A)
+# }
+
+# ASE of a symmetric matrix, given number of eigenvalues to calculate
+spectEmbed <- function(M, no, DAdjust = FALSE, opt = igraph.arpack.default) {
+  if (DAdjust){
+    diag(M) <- rowSums(M)/(dim(M)[1]-1);
+  }
   if (length(M[,1])==2){
     sp <- eigen(M);
     if (no == 1){
@@ -40,11 +69,12 @@ spectEmbed <- function(M,no, opt = igraph.arpack.default) {
     return(ret)
     
   } else{
-    sp = eigs(M, no, options = opt)
+    sp = eigs(M, no, options = opt, which = "LM")
     if (no == 1){
       X = sp$vectors*sqrt(abs(sp$values))
     } else {
-      X = sp$vectors %*% diag(sqrt(abs(sp$values)));
+      isn <- -1*(sp$values<0);
+      X = sp$vectors %*% diag(isn*sqrt(abs(sp$values)));
     }
     ret = list(X=X, lamda = sp$values)
     return(ret)

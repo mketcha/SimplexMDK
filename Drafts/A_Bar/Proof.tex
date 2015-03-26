@@ -1,0 +1,269 @@
+\documentclass[10pt]{article}
+%fleqn
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{url}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage{marvosym}
+\usepackage{enumerate}
+\usepackage{subfigure}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref} 
+
+
+\oddsidemargin 0mm
+\evensidemargin 5mm
+\topmargin -20mm
+\textheight 240mm
+\textwidth 160mm
+
+\newcommand{\vwi}{{\bf w}_i}
+
+\pagestyle{myheadings} 
+\markboth{}{Law of Large Graphs}
+
+\title{Law of Large Graphs}
+\author{}
+\date{}
+
+\begin{document}
+\large
+\maketitle
+\thispagestyle{headings}
+
+\vspace{-.5in}
+
+\section{Introduction}
+Here we are looking at the scenario where we have M adjacency matrices, $A_m$, that are sampled from the same statistical model, each with N vertices, with known vertex correspondences.  We are looking at methods that estimate the edge probability matrix P, which includes the naive case of averaging over the M adjacency matrices, $\bar{A}$, as well as spectral approaches, where we are taking the spectral decomposition of $\bar{A}$.
+
+\section{Theory Questions}
+\paragraph{} Here are some of the theoretical questions we would like to look at for this setting. Most of the thoughts were extending previous work to $M > 1$. 
+\\\\
+How the variance of the Latent Positions  of $\bar{A}$ is affected as a function of M.
+\\\\
+We would also want to try to get bounds for $|| P - \hat{P}|| = || XX' - \hat{X}\hat{X}^T||$  and $|| P - \bar{A} ||$ dependent on M.  For the case of M = 1,  similar results have been shown in some of the previous papers.  i.e. $|| P - A ||$ and $|| X - \hat{X}||$ (This we'd need to extend to $XX^T$).  Again need to extend it to $M>1$.
+\section{Model and Notation}
+\paragraph{1. Stochastic Block Model}
+We are considering a \textit{k}-dimensional Stochastic Block Model (SBM) for an N vertex undirected hollow graph with block probability matrix \textbf{B} and a block membership probability vector $\rho$.\\\\
+We will often consider a generalized Stochastic Block Model with latent positions distributed according to a mixture of Dirichlet random variables using parameter $r \in [0,  \infty )$,  where an exact SBM is obtained at $r = \infty$, and $r = 0$ leads to a uniform distribution.\\\\
+Given the model parameters the edge probability matrix $P \in [0,1]^{N\times N}$ is calculated.  M instances of adjacency matrices with known vertex correspondence are sampled with $A_{ij} \sim Bern(P_{ij})$.  With these $A_m$ for m in $1,...,M,$ then $\bar{A} = \frac{1}{M}\sum\limits_{m = 1}^M A_m$.
+
+\paragraph{2. Spectral Embedding and Clustering} Since P is positive and semidefinite with rank at most \textit{k}, P has a spectral decomposition $P = VSV^T$, where $V \in \mathbb{R}^{N\times k}$ has orthonormal columns and S is diagonal with decreasing entries.  X is then $VS^{1/2}$, and $P=XX^T$.  Let $\bar{A} = U_{\bar{A}}S_{\bar{A}}U_{\bar{A}}^T$ be the full rank decomposition of $\bar{A}$.  Then our estimate of X (subject to a rotation) is $\hat{X} = \hat{V}\hat{S}^{1/2}$, where $\hat{S} \in R^{dxd}$ is the diagonal matrix with the \textit{d} largest magnitude eigenvalues of $\bar{A}$ and $\hat{V} \in \mathbb{R}^{N\times k}$ is the matrix with orthonormal columns of the corresponding eigenvectors.
+
+Further, the rows $\hat{X}$ can be clustered into \textit{k} clusters by minimizing mean squared error.  By taking each row to be the mean of it's respective cluster, we get $\hat{X}_c$.
+
+\paragraph{3. Mean Estimators}  We are looking at three estimators for the mean:
+\begin{enumerate}
+\item $\bar{A}$, taking the average over M samples.
+\item $\hat{P} = \hat{X}\hat{X}^T$
+\item $\hat{P_c} = \hat{X_c}\hat{X_c}^T$
+\end{enumerate}
+
+\section{Matrix Theory Definitions Identities and Inequalities}
+\paragraph{1. Matrix Norm Definitions of $L^{MxN}$ with elements $L_{ij}$ and rank(L) = r}
+\begin{align*}
+\| L \|_1 &=  \mbox{Largest Column Sum of Magnitudes}\\
+\| L \|_\infty &= \mbox{Largest Row Sum of Magnitudes}\\
+\| L \|_2  &= \mbox{Largest Singular Value of } L\\
+\| L \|_{2\infty} &=  \mbox{Largest Euclidian Row Length of } L\\
+\| L \|_{F} &=  \sqrt{\sum_{i=1}^{m}\sum_{j=1}^{n}L_{ij}^2} = \sqrt{tr(L^TL)}\\
+\end{align*}
+
+\paragraph{2. Matrix Norm Properties}
+\begin{align*}
+\| L \|_2 &= \sqrt{\| L^TL \|_2}\\
+\| L \|_2 &\leq \sqrt{\| L \|_1\| L \|_\infty}\\
+\| L \|_2 &\leq \sqrt{MN}max_{ij}(|L_{ij}|)\\
+\| L \|_\infty &= \| L^T \|_1\\
+\| L \|_{2} &\leq \| L \|_F \leq \sqrt{r} \| L \|_{2}\\
+\| L \|_{2\infty} &\leq \| L \|_F\\
+\| L \|_{2\infty} &= \| L \|_2 \mbox{   if L is Diagonal}\\
+\| L_1 + L_2 \|_p &\leq \| L_1 \|_p+ \| L_2 \|_p\\
+\end{align*}
+
+\section{Useful Theorems}
+\paragraph{1. $\| A-P\|_{2}$}\mbox{}\\
+Let $\Delta$ be the maximum row sum of $P^{n\times n}$\\
+Then with probability at least 1-$\eta$
+\begin{equation}
+\| A-P\|_{2} \leq 2\sqrt{\Delta \log(n/\eta)}
+\end{equation}
+
+\paragraph{2. Davis-Kahan}\mbox{}\\
+Let $P = VSV^T, A = \hat{V}\hat{S}\hat{V}^T$ with $V^{n\times d} $\\
+Let $\delta$ be the minimum eigenvalue gap of $PP$, and $O$ a rotation
+\begin{equation}
+\| \hat{V}-VO\|_{F}^2 \leq 2\frac{\| AA-PP\|_{F}^2}{\delta^2}
+\end{equation}
+However, if A and P symmetric and $\gamma n$ the minimum eigenvalue gap of $P$, then
+\begin{equation}
+\| \hat{V}-VO\|_{F}^2 \leq 2\frac{\| A-P\|_{F}^2}{(\gamma n)^2}
+\end{equation}
+
+\paragraph{3. $\| \hat{V}-V\|_{F}^2$}\mbox{}\\
+Let $P = VSV^T, A = \hat{V}\hat{S}\hat{V}^T$ with $V^{n\times d} $\\
+$\Delta$ be the maximum row sum of $P^{n\times n}$, i.e. maximum degree\\
+$\gamma n$ be the minimum gap between distinct eigenvalues of $P$\\ 
+Using the above two statements, and knowledge that  $\| L \|_F \leq \sqrt{d} \| L \|_{2}$\\
+Then with probability at least 1-$\eta$
+\begin{equation}
+\| \hat{V}-V\|_{F}^2 \leq 4d\frac{\Delta \log(n/\eta)}{(\gamma n)^2}
+\end{equation}
+
+\paragraph{4. $\| \bar{A}-P\|_{2}$}\mbox{}\\
+Let $\bar{A} = \frac{1}{M}\sum_{m=1}^{M} A_m$ with $E[A_m^{n\times n}] = P^{n\times n} \quad \forall m \in 1,...,M$\\
+There exists an upper bound $B$ such that $\| A_m \|_2 \leq B$ for all $m\in [M]$\\
+$\sigma ^2 = \| E[A^TA]\| \leq 2n$\\
+\begin{equation}
+\Pr[\| \bar{A}-P\|_2 \geq t] \leq 2n\exp(\frac{-Mt^2/2}{\sigma^2 + 2Bt/3})
+\end{equation}
+
+\paragraph{5. Oliveira's Corollary 7.1}\mbox{}\\
+Let $X_1, ... X_M$ be mean-zero independent symmetric random matrices and there exists an $B>0$, such that $\|X_i^{n\times n}\|_2 < B$ for all $i\in [m]$\\
+Let $\sigma^2 = \|\sum_{i=1}^{M}\mathbb{E}[X_i^2] \|_2$
+\begin{equation}
+\Pr[\|\sum_{i=1}^{M}X_i \|_2 \geq t] \leq 2n\exp\Big(\frac{-t^2}{8\sigma^2 + 4Bt}\Big)
+\end{equation}
+
+\section{Walk Through Oliveira's $\|A-P\| $ proof with $\bar{A}$ modification}
+In order to let the bound $B = 1$ in Corollary 7.1, Oliveira breaks up $A-P$ into the sum of symmetric matrices that each have one nonzero component in the upper triangle, which is the corresponding value from $A-P$.  Since the expected value of each component of A is the corresponding component in P, each of these matrices are mean-zero. Further, 2-norm of each of these matrices is bounded by $B =1$.\\\\
+For a formal representation, let $\{e_i\}^n_{i=1}$ be the canonical basis for $\mathbb{R}^n$, $X^{n\times n} = A-P$, and $X_{ij}, A_{ij}, P_{ij}$ refer to the i, j (row, column) element of each matrix.\\
+We define the matrices $E^{(ij)} \in \mathbb{R}^{n\times n}$, for $i,j \in [n]$ as:
+\begin{equation*}
+E^{(ij)} \equiv 
+\left\{
+\begin{array}{ll}
+e_ie_j^T + e_je_i^T  &  i\neq j \\
+e_ie_i^T & i = j
+\end{array}
+\right.
+\end{equation*}
+Thus each $E^{(ij)}$ is a matrix with a 1 at the i,j and j,i positions, and 0's otherwise.\\
+Let $X^{(ij)}$ be defined as:
+
+\begin{equation*}
+X^{(ij)} = X_{ij}E^{(ij)} = (A_{ij} - P_{ij})E^{(ij)}
+\end{equation*}
+Therefore:
+\begin{equation*}
+X = A-P = \sum_{1\leq i\leq j \leq n }^{} X^{(ij)}
+\end{equation*}
+We now have a sum of mean zero symmetric random matrices, therefore the assumptions of Corallary 7.1 are met. Further we have bound $B=1$ since:
+\begin{equation*}
+\|X^{(ij)}\|_2 \leq \|A_{ij}E^{(ij)}\|_2 = 1
+\end{equation*}
+To find $\sigma^2$ we observe:
+
+\begin{equation*}
+\mathbb{E}[X^{(ij)}X^{(ij)}] = \mathbb{E} [(A_{ij} - P_{ij})^2E^{(ij)}E^{(ij)}] = P_{ij}(1-P_{ij})E^{(ij)}E^{(ij)}
+\end{equation*}
+We can see that:
+\begin{equation*}
+E^{(ij)}E^{(ij)} = 
+\left\{
+\begin{array}{ll}
+e_ie_i^T + e_je_j^T  &  i\neq j \\
+e_ie_i^T & i = j
+\end{array}
+\right.
+\end{equation*}
+Therefore,
+\begin{align*}
+\sum_{i\leq j}^{}\mathbb{E}[X^{(ij)}X^{(ij)}] &= \sum_{i}^{}P_{ii}(1-P_{ii})e_ie_i^T + \sum_{i<j}^{}P{ij}(1-P{ij})(e_ie_i^T +e_je_j^T)\\
+&= \sum_{i=1}^{n}\Big(\sum_{j=1}^{n}P_{ij}(1-P_{ij})\Big)e_ie_i^T
+\end{align*}
+This is a diagonal matrix and its largest eigenvalue is at most
+\begin{equation*}
+\max_{i\in [n]} \Big(\sum_{j=1}^{n}P_{ij}(1-P_{ij})\Big) \leq \max_{i\in [n]}\sum_{j=1}^{n}P_{ij} = \Delta
+\end{equation*}
+Therefore in the $A-P$ setting we can use
+\begin{equation*}
+\sigma^2 = \Delta
+\end{equation*}
+To extend this variance to $\bar{A}-P$ we observe that the variance of the Bernoulli above becomes the variance of an M sample Bernoulli, giving p(1-p)/M,
+\begin{equation*}
+\bar{\sigma}^2 = \frac{\Delta}{M}
+\end{equation*}
+Further, note that $\bar{X}^{(ij)} = (\bar{A}_{ij}-P_{ij})E^{(ij)}$ is still a mean zero symmetric random matrix that is bounded by $B=1$.\\
+Now to apply Corollary 7.1 to  $\bar{A}-P$ we use $\bar{\sigma}^2 = \frac{\Delta}{M}$ and B = 1.
+\begin{equation*}
+\forall t > 0, \mathbb{P}\Big[\|\bar{A}-P\|_2 \geq t\Big] \leq 2n\exp\Big(-\frac{t^2}{8\Delta/M + 4t}\Big)
+\end{equation*}
+Now let $c>0$ be given and assume $n^{-c} \leq \eta \leq 1/2$. Then, there exists a $ C= C(c)$ independent of $n$ and $P$ such that whenever $\Delta \geq C\ln(n)$,
+\begin{equation*}
+t = 4\sqrt{\frac{\Delta}{M}\ln\Big(\frac{2n}{\eta}\Big)} \leq \frac{2\Delta}{M}
+\end{equation*}
+Using this t,
+\begin{equation*}
+%\mathbb{P}\Big[ \|\bar{A}-P\|_2 \leq 4\sqrt{\frac{\Delta}{M}\ln\big(\frac{2n}{\delta}\big)}\Big] \leq 2n\exp\Big(-\frac{t^2}{16\Delta/M}\Big) = 2n\exp\Big(-\frac{16\Delta/M ln(2n/\delta)}{16\Delta/M}\Big) = \delta
+\mathbb{P}\Big[ \|\bar{A}-P\|_2 \leq 4\sqrt{\Delta/M\ln(2n/\eta)}\Big] \leq 2n\exp\Big(-\frac{t^2}{16\Delta/M}\Big) = 2n\exp\Big(-\frac{16\Delta/M \ln(2n/\eta)}{16\Delta/M}\Big) = \eta
+\end{equation*}
+\section{Extensions to $\bar{A}$}
+\paragraph{1. $\| \bar{A}-P\|_{2}$}\mbox{}\\
+Let $\Delta$ be the maximum row sum of $P^{n\times n}$, and M be the number of samples for $\bar{A}$\\
+Then with probability at least 1-$\eta$
+\begin{equation}
+\| \bar{A}-P\|_{2} \leq 2\sqrt{\Delta/M \log(n/\eta)}
+\end{equation}
+\paragraph{2. $\| \bar{V}-V\|_{F}^2$}\mbox{}\\
+Let $P = VSV^T, \bar{A} = \bar{V}\bar{S}\bar{V}^T$ with $V^{n\times d} $\\
+$\Delta$ be the maximum row sum of $P^{n\times n}$, i.e. maximum degree\\
+$\gamma n$ be the minimum gap between distinct eigenvalues of $P$\\ 
+Using the above statement, Davis-Kahan, and knowledge that  $\| L \|_F \leq \sqrt{d} \| L \|_{2}$\\
+Then with probability at least 1-$\eta$
+\begin{equation}
+\| \bar{V}-V\|_{F}^2 \leq 4d\frac{\Delta \log(n/\eta)}{M(\gamma n)^2}
+\end{equation}
+\section{Important Proofs}
+\paragraph{1. $\| \hat{X}-X\|_{2\rightarrow\infty}$}\mbox{}\\
+Let $P = VSV^T, A = \hat{V}\hat{S}\hat{V}^T$ with $V^{n\times d} $\\
+$ X = VS^{1/2}$ and $\hat{X} = \hat{V}\hat{S}^{1/2}$\\
+$\Delta$ be the maximum row sum of $P^{n\times n}$, i.e. maximum degree\\
+$\gamma n$ be the minimum gap between distinct eigenvalues of $P$\\ 
+Using $X=PVS^{-1/2}$ and $\hat{X} = A\hat{V}\hat{S}^{-1/2}$\\
+\begin{align*}
+\hat{X}-X &= A\hat{V}\hat{S}^{-1/2} - PVS^{-1/2}\\
+&= A\hat{V}\hat{S}^{-1/2} - PVS^{-1/2} + AV\hat{S}^{-1/2} - AV\hat{S}^{-1/2} +AVS^{-1/2} -AVS^{-1/2}\\
+&= A(\hat{V} - V)\hat{S}^{-1/2} + AV(\hat{S}^{-1/2}-S^{-1/2}) +(A-P)VS^{-1/2}  \\
+\end{align*}
+Thus, one modification for $\| \hat{X}\hat{X}^T-XX^T\|_{2\rightarrow\infty}$ :
+\begin{equation*}
+\hat{X}\hat{X}^T-XX^T = A\hat{V}\hat{S}^{-1}\hat{V}^TA - PVS^{-1}V^TP
+\end{equation*}
+Knowing $V^TP = SV^T$, we have $S^{-1}V^TP = V$
+\begin{align*}
+\hat{X}\hat{X}^T-XX^T &=A\hat{V}\hat{S}^{-1}\hat{V}^TA - PVS^{-1}V^TP\\
+&= A\hat{V}\hat{V}^T - PVV^T\\
+&= A\hat{V}\hat{V}^T - PVV^T + A\hat{V}V^T - A\hat{V}V^T + AVV^T - AVV^T\\
+&= A\hat{V}(\hat{V}^T - V^T) + (A-P)VV^T + A(\hat{V} - V)V^T
+\end{align*}
+Then,
+\begin{align*}
+\|\hat{X}\hat{X}^T-XX^T\|_2 &=\|A\hat{V}(\hat{V}^T - V^T) + (A-P)VV^T + A(\hat{V} - V)V^T\|_2\\
+&\leq 2\|A\|_2\|\hat{V}-V\|_F + \|A-P\|_2
+\end{align*}
+
+Alternatively, using  $PV = VS$, we have $PVS^{-1} = V$
+\begin{align*}
+\hat{X}\hat{X}^T-XX^T &=A\hat{V}\hat{S}^{-1}\hat{V}^TA - PVS^{-1}V^TP\\
+&= \hat{V}\hat{V}^TA - VV^TP\\
+\end{align*}
+This bound was shown in Tang et al. (2013):\\
+Letting $\delta^{-1}_d = \lambda_d(P)-\lambda_{d+1}(P)$
+\begin{align*}
+\| \hat{V}\hat{V}^TA - VV^TP\|_2 &\leq \| \hat{V}\hat{V}^T (A-P)\| +\| (\hat{V}\hat{V}^T - VV^T)P\|\\
+&\leq 2 \sqrt{n\log(n/\eta)} + 4 \delta^{-1}_d \sqrt{n\log(n/\eta)}\\
+&\leq 6\delta^{-1}_d \sqrt{n\log(n/\eta)}
+\end{align*}
+With probability $1-2\eta$
+\section{Questions}
+\begin{equation*}
+t = 4 \sqrt{\Delta \ln (2n/\delta)} \leq 2\Delta \mbox{   : Oliveira p.12}
+\end{equation*}
+\begin{equation*}
+\hat{X} = A\hat{V}\hat{S}^{-1/2} \mbox{   : Sussman 2014 (Perfect) p.7}
+\end{equation*}
+\end{document}

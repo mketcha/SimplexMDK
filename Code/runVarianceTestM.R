@@ -29,7 +29,7 @@ for (i in 1:length(M)){
     A_Bar <- A_Bar +g;
   }
   A_Bar <- A_Bar/M[i];
-  ASE <- spectEmbed(A_Bar, k, myoptions)
+  ASE <- spectEmbed(A_Bar, k, DAdjust = TRUE, opt = myoptions)
   
   plot(ASE$X[,1],ASE$X[,2], ylim = c(-1,1), xlim = c(-1,1))
   points(ASE$X[(Z[,1]==1),1],ASE$X[(Z[,1]==1),2], col ="blue")
