@@ -1,6 +1,7 @@
 # 2/6/2015 MDK
 # Generic Functions for Dealing with Graphs
-
+require("doParallel")
+require("foreach")
 # Construct an adjacency matrix, given an edge Probabilty matrix
 P2Adj <- function( P, undirected = TRUE, hollow = TRUE) {
   d = dim(P);
@@ -21,6 +22,16 @@ P2Adj <- function( P, undirected = TRUE, hollow = TRUE) {
     diag(A) <- diag(A)/2;
   }
   return(A)
+}
+
+breakScalar <- function(N,d){
+  n = round(N/d);
+  ret = c();
+  for (i in 1:(d-1)){
+    ret[i] = n;
+  }
+  ret[i+1] <- n+ N%%d;
+  return(ret)
 }
 
 # P2Adj <- function( P, undirected = TRUE, hollow = TRUE) {
@@ -60,6 +71,7 @@ spectEmbed <- function(M, no, DAdjust = FALSE, opt = igraph.arpack.default) {
       X = sp$vectors[,1]*sqrt(abs(sp$values[1]))
       lambda = sp$values[1];
     } else if (no==2){
+      isn <- 2*((-1*(sp$values<0))+.5);
       X = sp$vectors %*% diag(sqrt(abs(sp$values)));
       lambda = sp$values
     } else {
@@ -73,8 +85,8 @@ spectEmbed <- function(M, no, DAdjust = FALSE, opt = igraph.arpack.default) {
     if (no == 1){
       X = sp$vectors*sqrt(abs(sp$values))
     } else {
-      isn <- -1*(sp$values<0);
-      X = sp$vectors %*% diag(isn*sqrt(abs(sp$values)));
+      isn <- 2*((-1*(sp$values<0))+.5);
+      X = sp$vectors %*% diag(sqrt(abs(sp$values)));
     }
     ret = list(X=X, lamda = sp$values)
     return(ret)
@@ -115,4 +127,18 @@ generateZ_nxk <- function(PI_1xk, n){
     count <- count+VCC[i]
   }
   return(Z);
+}
+
+calcCov <- function(X, x){
+  d <- dim(X)[2]
+  n <- dim(X)[1]
+  Delta = (t(X) %*% X)/n;
+  DInv = ginv(Delta);
+  inside = matrix(0,d,d);
+  for (i in 1:n){
+    inside = inside + (t(X[i,,drop = FALSE]) %*% X[i,,drop = FALSE])*as.vector((x %*% t(X[i,,drop = FALSE]))*(1-(x %*% t(X[i,,drop = FALSE]))));
+  }
+  inside  = inside/n;
+  Cov = DInv %*% inside %*% DInv;
+  return(Cov)
 }
