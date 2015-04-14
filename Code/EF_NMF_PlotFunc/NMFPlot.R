@@ -84,7 +84,9 @@ for (ind in 1:3){
         P_Bar <- Reduce('+',P_Bar);
       }
       P_Bar <- P_Bar/m;
-      
+      empty <- rowSums(P_Bar) == 0;
+      P_Bar <- P_Bar[!empty,!empty];
+      P <- P[!empty,!empty]
       err_v <- P-P_Bar;
       err_v <- err_v[upper.tri(err_v)];
       error_mean[i,1] <- mean(err_v^2);
@@ -155,6 +157,9 @@ for (ind in 1:3){
         P_Bar <- Reduce('+',P_Bar);
       }
       P_Bar <- P_Bar/m;
+      empty <- rowSums(P_Bar) == 0;
+      P_Bar <- P_Bar[!empty,!empty];
+      P <- P[!empty,!empty]
       #diag(P_Bar) <- rowSums(P_Bar)/(dim(P_Bar)[1]-1);
       err_v <- P-P_Bar;
       err_v <- err_v[upper.tri(err_v)];
