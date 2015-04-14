@@ -1,0 +1,318 @@
+\documentclass[10pt]{article}
+%fleqn
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{url}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage{marvosym}
+\usepackage{enumerate}
+\usepackage{subfigure}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref} 
+
+
+\oddsidemargin 0mm
+\evensidemargin 5mm
+\topmargin -20mm
+\textheight 240mm
+\textwidth 160mm
+
+\newcommand{\vwi}{{\bf w}_i}
+
+\pagestyle{myheadings} 
+\markboth{}{Law of Large Graphs}
+
+\title{Law of Large Graphs}
+\author{}
+\date{}
+
+\begin{document}
+	\large
+	\maketitle
+	\thispagestyle{headings}
+	
+	\vspace{-.5in}
+	
+	\section{Introduction}
+	We are looking at the scenario where we have M adjacency matrices, $A_m$, that are sampled from the same edgewise probability matrix, therefore the number of vertices is fixed and there is known vertex correspondence.  We are looking at methods that estimate the edge probability matrix P, which include the naive method of averaging over the M adjacency matrices, $\bar{A}$, as well as spectral approaches, where we are taking the spectral decomposition of $\bar{A}$.
+	
+	\section{Model and Notation}
+	\paragraph{1. Stochastic Block Model}
+	We are considering a \textit{k}-dimensional Stochastic Block Model (SBM) for an N vertex undirected hollow graph with block probability matrix \textbf{B} and a block membership probability vector $\rho$.\\\\
+	We will often consider a generalized Stochastic Block Model with latent positions distributed according to a mixture of Dirichlet random variables using parameter $r \in [0,  \infty )$,  where an exact SBM is obtained at $r = \infty$, and $r = 0$ leads to a uniform distribution.\\\\
+	Given the model parameters the edge probability matrix $P \in [0,1]^{N\times N}$ is calculated.  M instances of adjacency matrices with known vertex correspondence are sampled with $A_{ij} \sim Bern(P_{ij})$.  With these $A_m$ for m in $1,...,M,$ then $\bar{A} = \frac{1}{M}\sum\limits_{m = 1}^M A_m$.
+	
+	\paragraph{2. Spectral Embedding and Clustering} Since P is positive and semidefinite with rank at most \textit{k}, P has a spectral decomposition $P = VSV^T$, where $V \in \mathbb{R}^{N\times k}$ has orthonormal columns and S is diagonal with decreasing entries.  X is then $VS^{1/2}$, and $P=XX^T$.  Let $\bar{A} = U_{\bar{A}}S_{\bar{A}}U_{\bar{A}}^T$ be the full rank decomposition of $\bar{A}$.  Then our estimate of X (subject to a rotation) is $\hat{X} = \hat{V}\hat{S}^{1/2}$, where $\hat{S} \in R^{dxd}$ is the diagonal matrix with the \textit{d} largest magnitude eigenvalues of $\bar{A}$ and $\hat{V} \in \mathbb{R}^{N\times k}$ is the matrix with orthonormal columns of the corresponding eigenvectors.
+	
+	Further, the rows $\hat{X}$ can be clustered into \textit{k} clusters by minimizing mean squared error.  By taking each row to be the mean of it's respective cluster, we get $\hat{X}_c$.
+	
+	\paragraph{3. Mean Estimators}  We are looking at three estimators for the mean:
+	\begin{enumerate}
+		\item $\bar{A}$, taking the average over M samples.
+		\item $\hat{P} = \hat{X}\hat{X}^T$
+		\item $\hat{P_c} = \hat{X_c}\hat{X_c}^T$
+	\end{enumerate}
+
+\paragraph{4. Relative Efficiency} We will examine the relative efficiency of the ASE vs. Naive approximations of the mean.
+\begin{equation*}
+RE = \dfrac{Var(\hat{P})}{Var(\bar{A})}
+\end{equation*}
+
+\section{Theory Questions}
+\paragraph{Proofs for Relative Efficiency} \mbox{}\\
+We would like to have a formal proof for the following formulas that were demonstrated through simulations of an exact SBM:\\
+
+If k is known and d is chosen to be k, then for high N:
+\[
+RE = \dfrac{2k}{N}
+\]
+
+If d is selected to be greater than k
+\[
+RE = \dfrac{2k+4(d-k)}{N} = \dfrac{4d-2k}{N}
+\]
+\section{Simulations} 
+Simulations using 1000 trials for 3 different exact SBM's (with block dimensions k = 2,3,4).  The diagonal was perfectly augmented with values from the P matrix\\
+RE was calculated by taking the mean of the component-wise variances.\\
+\\
+The following simulations use:
+\begin{equation*}
+B = \begin{bmatrix}
+.42 & .2 \\
+.2 & .7 
+\end{bmatrix}
+,\qquad \rho = \begin{bmatrix}
+.5 & .5
+\end{bmatrix} \mbox{ \qquad if k = 2}
+\end{equation*}
+\begin{equation*}
+B = \begin{bmatrix}
+.42 & .2 & .3\\
+.2 & .5 & .15\\
+.3 & .15 & .7
+\end{bmatrix}
+,\qquad \rho = \begin{bmatrix}
+.33 & .33 & .34
+\end{bmatrix} \mbox{ \qquad if k = 3}
+\end{equation*}
+\begin{equation*}
+B = \begin{bmatrix}
+.42 & .2 & .3 & .05\\
+.2 & .49 & .35 & .15\\
+.3 & .35 & .6 & .25\\
+.05& .15 & .25 & .7
+\end{bmatrix}
+,\qquad \rho = \begin{bmatrix}
+.25 & .25 & .25 &.25
+\end{bmatrix} \mbox{ \qquad if k = 4}
+\end{equation*}
+\newpage
+\paragraph{Effect of M on RE} \mbox{}\\
+We can see RE is constant as a function of M for high M.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=18cm]{RPlot07.pdf}
+	\caption{ For high M, RE is constant as a function of M.  Right image is a zoom in for low M.}
+	\label{fig:plot1}
+\end{figure}
+
+
+\newpage
+As a function of N, when k and d are known, simulations indicate that: $RE = \dfrac{2k}{N}$
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=12cm]{RPlot02.pdf}
+	\caption{ Relative Efficiency as a function of N using SBM's of 3 different dimensions}
+	\label{fig:plot1}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=12cm]{RPlot03.pdf}
+	\caption{ Plot showing that for high N, Relative Efficiency approaches 2k/n}
+	\label{fig:plot1}
+\end{figure}
+\newpage
+The following simulations observe the effect when d is not known:
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=18cm]{RPlot.pdf}
+	\caption{  Effect of error in d on RE when k = 3.  Right image is a zoom in for $d \ge k$}
+	\label{fig:plot1}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=18cm]{RPlot01.pdf}
+	\caption{  Effect of error in d on constant term when k = 3. Right image is a zoom in for $d \ge k$}
+	\label{fig:plot1}
+\end{figure}
+\newpage
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=18cm]{RPlot05.pdf}
+	\caption{  Effect of error in d on RE when k = 4. Right image is a zoom in for $d \ge k$}
+	\label{fig:plot1}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=18cm]{RPlot04.pdf}
+	\caption{  Effect of error in d on constant term when k = 4. Right image is a zoom in for $d \ge k$}
+	\label{fig:plot1}
+\end{figure}
+\newpage
+Clearly then it is better to overestimate d than underestimate, however, when d is overestimated:
+\[
+RE = \dfrac{2k+4(d-k)}{N} = \dfrac{4d-2k}{N}
+\]
+\paragraph{Effect of B}\mbox{}\\
+The following B matrices were tested:
+\begin{equation*}
+B1 = \begin{bmatrix}
+.42 & .2 \\
+.2 & .7 
+\end{bmatrix},\;
+B2 = \begin{bmatrix}
+.1 & .02 \\
+.02 & .07 
+\end{bmatrix},\;
+B3 = \begin{bmatrix}
+.9 & .2 \\
+.2 & .8 
+\end{bmatrix},\;
+B4 = \begin{bmatrix}
+.5 & .4 \\
+.4 & .6 
+\end{bmatrix},\;
+B5 = \begin{bmatrix}
+.02 & .005 \\
+.005 & .03 
+\end{bmatrix}
+\end{equation*}
+\begin{equation*}
+\rho = \begin{bmatrix}
+.5 & .5
+\end{bmatrix}
+\end{equation*}
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=18cm]{RPlot08.pdf}
+	\caption{Effects of varying B not seen asymptotically when $\rho = [.5, .5]$.}
+	\label{fig:plot1}
+\end{figure}
+\newpage
+\paragraph{Effect of $\rho$}\mbox{}\\
+The following $\rho$ vectors were tested:
+\begin{equation*}
+\rho = \begin{bmatrix}
+.5 & .5
+\end{bmatrix},\;
+\rho = \begin{bmatrix}
+.25 & .75
+\end{bmatrix},\;
+\rho = \begin{bmatrix}
+.1 & .9
+\end{bmatrix},\;
+\rho = \begin{bmatrix}
+.05 & .95
+\end{bmatrix},\;
+\rho = \begin{bmatrix}
+.01 & .99
+\end{bmatrix}
+\end{equation*}
+For B:
+\begin{equation*}
+B1 = \begin{bmatrix}
+.42 & .2 \\
+.2 & .7 
+\end{bmatrix},\;
+B2 = \begin{bmatrix}
+.1 & .02 \\
+.02 & .07 
+\end{bmatrix}
+\end{equation*}
+Following results show an asymptotic effect of varying B when $\rho \ne [.5,.5]$
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=16.2cm]{RPlot09.pdf}
+	\caption{Effect of altering $\rho$ for B1.}
+	\label{fig:plot1}
+\end{figure}
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=16.2cm]{RPlot10.pdf}
+	\caption{Effect of altering $\rho$ for B2.}
+	\label{fig:plot1}
+\end{figure}
+\newpage
+\paragraph{Analysis of Per Block Relative Efficiency}
+\begin{equation*}
+\rho = \begin{bmatrix}
+.5 & .5
+\end{bmatrix}
+\end{equation*}
+\begin{equation*}
+B1 = \begin{bmatrix}
+.42 & .2 \\
+.2 & .7 
+\end{bmatrix},\;
+B2 = \begin{bmatrix}
+.1 & .02 \\
+.02 & .07 
+\end{bmatrix}
+\end{equation*}
+Note that efficiency of individual blocks converge to same value when $\rho = [.5,.5]$
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=15.8cm]{RPlot12.pdf}
+	\caption{Per block RE for B1.}
+	\label{fig:plot1}
+\end{figure}
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=15.8cm]{RPlot11.pdf}
+	\caption{Per block RE for B2.}
+	\label{fig:plot1}
+\end{figure}
+\newpage
+\section{Proving 2k/N result}
+We would like to show that:
+\begin{equation*}
+ RE = \dfrac{Var(\hat{P}_{ij})}{Var(\bar{A}_{ij})} = \dfrac{E[(\hat{P}-P)^2_{ij}]}{E[(\bar{A}-P)^2_{ij}]}=\dfrac{2k}{N} \mbox{\quad   For large N}
+\end{equation*}
+
+Since $\bar{A}$ is the mean of M Bernoulli's we know:
+\[
+E[(\bar{A}-P)^2_{ij}] = \frac{P_{ij}(1-P_{ij})}{M} = \dfrac{X_i^TX_j(1-X_i^TX_j)}{M}
+\]
+
+Since $\hat{P}$ is generated from a noisy dot product of $\hat{X}_i^T\hat{X}_j$:
+\[
+E[(\hat{P}-P)^2_{ij}] = \dfrac{\frac{1}{N}(X_i^T\Sigma_jX_i + X_j^T\Sigma_iX_j) + \frac{1}{N^2}(Tr(\Sigma_i\Sigma_j))}{M}
+\]
+
+Letting the $\frac{1}{N^2M}$ term quickly approach zero, we have:
+\[
+E[(\hat{P}-P)^2_{ij}] = \dfrac{X_i^T\Sigma_jX_i + X_j^T\Sigma_iX_j}{NM}
+\]
+
+From central limit theorem paper:
+\[
+\Sigma_i = \Delta^{-1}E\Big[X_jX_j^T[x_i^TX_j(1-x_i^TX_j)]\Big]\Delta^{-1} \mbox{\quad where \quad} \Delta^{d \times d} = E[X_jX_j^T]
+\]
+Therefore it comes down to showing that for high N:
+\[
+\dfrac{X_i^T\Sigma_jX_i + X_j^T\Sigma_iX_j}{NX_i^TX_j(1-X_i^TX_j)} \approx \dfrac{2k}{N}
+\]
+\[
+\dfrac{X_i^T\Sigma_jX_i + X_j^T\Sigma_iX_j}{X_i^TX_j(1-X_i^TX_j)} \approx 2k
+\]
+or 
+\[
+\dfrac{X_i^T\Sigma_jX_i + X_j^T\Sigma_iX_j}{2k} \approx X_i^TX_j(1-X_i^TX_j) = P_{ij}(1-P_{ij})
+\]
+\end{document}
