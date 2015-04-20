@@ -48,6 +48,8 @@ eff_M_var_NMF = matrix(0,length(PIs),dim(MN_N)[1]);
 eff_M_var = matrix(0,length(PIs),dim(MN_N)[1]);
 err_M = matrix(0,length(PIs),dim(MN_N)[1])
 err_M_NMF = matrix(0,length(PIs),dim(MN_N)[1])
+err_M_var = matrix(0,length(PIs),dim(MN_N)[1])
+err_M_var_NMF = matrix(0,length(PIs),dim(MN_N)[1])
 t_NMF = matrix(0,length(PIs),dim(MN_N)[1]);
 t_ASE = matrix(0,length(PIs),dim(MN_N)[1]);
 for (ind in 1:length(PIs)){
@@ -61,6 +63,7 @@ for (ind in 1:length(PIs)){
     error_Phat <- matrix(0, trials, max_k);
     error_mean <- matrix(0, trials, 1);
     eff_M_bySample <- matrix(0, trials, 1);
+    err_M_bySample <- matrix(0, trials, 1);
     for (i in 1:trials) {
       if (i%%100 ==0)
         print(i)
@@ -92,7 +95,7 @@ for (ind in 1:length(PIs)){
       err_v_noClust <- err_v_noClust[upper.tri(err_v_noClust)];
       error_Phat_noClust[i,j] <- mean(err_v_noClust^2);
       eff_M_bySample[i,1] <- mean(err_v_noClust^2)/error_mean[i,1];
-      
+      err_M_bySample[i,1] <- mean(err_v_noClust^2);
       
       #}
     }
@@ -103,6 +106,7 @@ for (ind in 1:length(PIs)){
     eff_M_var_NMF[ind,run] = var(eff_M_bySample)
     eff_M_NMF[ind,run] = mean(error_Phat_noClust[,j])/mean(error_mean)
     err_M_NMF[ind,run] = mean(error_Phat_noClust[,j]);
+    err_M_var_NMF[ind,run] = var(err_M_bySample);
   }
 }
 
@@ -117,6 +121,7 @@ for (ind in 1:length(PIs)){
     error_Phat <- matrix(0, trials, max_k);
     error_mean <- matrix(0, trials, 1);
     eff_M_bySample <- matrix(0, trials, 1);
+    err_M_bySample <- matrix(0, trials, 1);
     for (i in 1:trials) {
       if (i%%100 ==0)
         print(i)
@@ -156,7 +161,7 @@ for (ind in 1:length(PIs)){
       err_v_noClust <- err_v_noClust[upper.tri(err_v_noClust)];
       error_Phat_noClust[i,j] <- mean(err_v_noClust^2);
       eff_M_bySample[i,1] <- mean(err_v_noClust^2)/error_mean[i,1];
-      
+      err_M_bySample[i,1] <- mean(err_v_noClust^2);
       
       #}
     }
@@ -167,6 +172,7 @@ for (ind in 1:length(PIs)){
     eff_M_var[ind,run] = var(eff_M_bySample)
     eff_M[ind,run] = mean(error_Phat_noClust[,j])/mean(error_mean)
     err_M[ind,run] = mean(error_Phat_noClust[,j]);
+    err_M_var[ind,run] = var(err_M_bySample);
   }
 }
 
