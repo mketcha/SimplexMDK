@@ -40,7 +40,7 @@ max_k <- 4;
 nclust <- 3;
 myoptions <- igraph.arpack.default
 myoptions$maxiter <- 20000
-eff_M_NMF = matrix(0,length(PIs),dim);
+eff_M_NMF = matrix(0,length(PIs),dim(MN_N)[1]);
 eff_M = matrix(0,length(PIs),dim(MN_N)[1]);
 eff_M_S_NMF = matrix(0,length(PIs),dim(MN_N)[1]);
 eff_M_S = matrix(0,length(PIs),dim(MN_N)[1]);
