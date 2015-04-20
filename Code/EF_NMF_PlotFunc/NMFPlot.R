@@ -86,7 +86,7 @@ for (ind in 1:length(PIs)){
       #diag(P_Bar) <- rowSums(P_Bar)/(dim(P_Bar)[1]-1);
       ptm <- proc.time();
       ASE <- nmf(P_Bar,2, '.M#brunet', seed  = "nndsvd")
-      t_NMF[ind,run] <- t_NMF[ind,run] +(proc.time()-ptm);
+      t_NMF[ind,run] <- t_NMF[ind,run] +(proc.time()-ptm)[[3]];
       P_hat_noClust <- basis(ASE) %*% coef(ASE);
       err_v_noClust <- P-P_hat_noClust;
       err_v_noClust <- err_v_noClust[upper.tri(err_v_noClust)];
@@ -150,7 +150,7 @@ for (ind in 1:length(PIs)){
 #       }
       ptm <- proc.time();
       ASE <- Schein(P_Bar,j, 3, opt = myoptions)
-      t_ASE[ind,run] <- t_ASE[ind,run] +(proc.time()-ptm);
+      t_ASE[ind,run] <- t_ASE[ind,run] +(proc.time()-ptm)[[3]];
       P_hat_noClust <- ASE$X %*% t(ASE$X);
       err_v_noClust <- P-P_hat_noClust;
       err_v_noClust <- err_v_noClust[upper.tri(err_v_noClust)];
