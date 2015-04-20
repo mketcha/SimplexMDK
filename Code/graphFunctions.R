@@ -1,5 +1,7 @@
 # 2/6/2015 MDK
 # Generic Functions for Dealing with Graphs
+require("igraph")
+require("rARPACK")
 require("doParallel")
 require("foreach")
 # Construct an adjacency matrix, given an edge Probabilty matrix
@@ -129,6 +131,17 @@ generateZ_nxk <- function(PI_1xk, n){
   return(Z);
 }
 
+generateZ_nxk_exact <- function(PI_1xk, n){
+  VCC <- PI_1xk*n;
+  Z <- matrix(0, n, length(VCC));
+  count = 1;
+  for (i in 1:length(VCC)){
+    Z[count:(count+VCC[i]-1),i] <-1;
+    count <- count+VCC[i]
+  }
+  return(Z);
+}
+
 calcCov <- function(X, x){
   d <- dim(X)[2]
   n <- dim(X)[1]
@@ -141,4 +154,34 @@ calcCov <- function(X, x){
   inside  = inside/n;
   Cov = DInv %*% inside %*% DInv;
   return(Cov)
+}
+
+makeP_Bar <- function(P,m,n){
+P_Bar <- matrix(0,n,n);
+if (m*n < 2000){
+  for (h in 1:m) {
+    g <- P2Adj(P);
+    P_Bar <- P_Bar +g;
+  }
+} else {
+  P_Bar <- foreach(mb = breakScalar(m, 3), .export = c("P2Adj")) %dopar%{
+    Ps_i = matrix(0,n,n);
+    for (h in 1:mb) {
+      g <- P2Adj(P);
+      Ps_i <- Ps_i +g;
+    }
+    return(Ps_i)
+  }
+  P_Bar <- Reduce('+',P_Bar);
+}
+P_Bar <- P_Bar/m;
+return(P_Bar)
+}
+
+Schein <- function(M, rank, iter, myoptions){
+  for (i in 1:iter){
+    ASE <- spectEmbed(M, rank, DAdjust=FALSE, opt = myoptions)
+    diag(M) <- diag(ASE$X %*% t(ASE$X));
+  }
+  return(ASE)
 }
