@@ -1,14 +1,14 @@
 # 2/9/2015: MDK
-# functions to generate generalized SBM using Dirilecht Random Variable
+# functions to generate generalized SBM using Dirichlet Random Variable
 
 #function: Generate dSBM
 #Parameters: B  -> Block Matrix
 #            PI -> Class Likelihood
 #            n  -> Number of vertices
-#            r  -> Dirilecht Parameter
+#            r  -> Dirichlet Parameter
 #            opt -> ASE options
 # Return: P-> Edge Probability Matrix
-generateDirilechtSBM <- function(B, PI, n, r, opt = igraph.arpack.default) {
+generateDirichletSBM <- function(B, PI, n, r, opt = igraph.arpack.default) {
   k <- length(PI);
   nVec <- VertexClassCount(PI, n)
   BASE <- spectEmbed(B,k, opt = opt)
@@ -32,7 +32,7 @@ generateDirilechtSBM <- function(B, PI, n, r, opt = igraph.arpack.default) {
 #Parameters: B  -> Block Matrix
 #            opt -> ASE options
 # Return: BASE-> ASE of B matrix
-generateDirilechtBASE <- function(B, opt = igraph.arpack.default){
+generateDirichletBASE <- function(B, opt = igraph.arpack.default){
   k <- dim(B)[1];
   repeat{
     BASE <- spectEmbed(B,k, opt = opt)
@@ -40,7 +40,7 @@ generateDirilechtBASE <- function(B, opt = igraph.arpack.default){
     rot <- nloptr(as.vector(diag(k)), eval_f = diriOpti, lb = as.vector(-matrix(1,k,k)), ub = as.vector(matrix(1,k,k)), eval_g_ineq = diriIneq, eval_g_eq = diriEq, opts = list(algorithm = "NLOPT_GN_ISRES", maxeval = 10000), nVertex = k, dimLatentPosition = k, xHatTmp = as.vector(BASE$X));
     BASE$X <- BASE$X %*% matrix(rot$solution,k,k);
     
-    d_graph <- generateDirilechtSBM_BASE( BASE, rep(1/k,k), 100, 500);
+    d_graph <- generateDirichletSBM_BASE( BASE, rep(1/k,k), 100, 500);
     if (sum(is.na(d_graph$xDir)) == 0) {
       break
     }
@@ -56,7 +56,7 @@ generateDirilechtBASE <- function(B, opt = igraph.arpack.default){
 #            r  -> Dirilecht Parameter
 # Return: P   -> Edge Probability Matrix
 #        nVec -> number of vertices in each class
-generateDirilechtSBM_BASE <- function(BASE, PI, n, r) {
+generateDirichletSBM_BASE <- function(BASE, PI, n, r) {
   k <- length(PI);
   nVec <- VertexClassCount(PI, n)
   xDir <- list();

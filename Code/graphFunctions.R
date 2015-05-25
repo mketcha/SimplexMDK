@@ -1,9 +1,11 @@
-# 2/6/2015 MDK
+# 5/25/2015 MDK
 # Generic Functions for Dealing with Graphs
 require("igraph")
 require("rARPACK")
 require("doParallel")
 require("foreach")
+
+
 # Construct an adjacency matrix, given an edge Probabilty matrix
 P2Adj <- function( P, undirected = TRUE, hollow = TRUE) {
   d = dim(P);
@@ -26,8 +28,9 @@ P2Adj <- function( P, undirected = TRUE, hollow = TRUE) {
   return(A)
 }
 
+# Helper function for make P_bar
 breakScalar <- function(N,d){
-  n = round(N/d);
+  n = floor(N/d);
   ret = c();
   for (i in 1:(d-1)){
     ret[i] = n;
@@ -35,32 +38,6 @@ breakScalar <- function(N,d){
   ret[i+1] <- n+ N%%d;
   return(ret)
 }
-
-# P2Adj <- function( P, undirected = TRUE, hollow = TRUE) {
-#   d = dim(P);
-#   if (!undirected){
-#     P_vect <- as.vector(P)
-#     bino <- rbinom(length(P_vect), 1, P_vect);
-#     bino <- matrix(bino,d);
-#     if(hollow){
-#       diag(bino) <- 0;
-#     }
-#     return(bino)
-#   }
-#   #bino <- upper.tri(bino, TRUE)*bino;
-#   P_vect <- P[upper.tri(P,TRUE)];
-#   bino <- rbinom(length(P_vect), 1, P_vect);
-#   A <- matrix(0,d,d);
-#   A[upper.tri(A,TRUE)] <- bino;
-#   A <- A+t(A);
-#   #A <- symMatrix(bino,d[1], byrow=TRUE)
-#   if (hollow){
-#     diag(A) <- 0;
-#   } else {
-#     diag(A) <- diag(A)/2;
-#   }
-#   return(A)
-# }
 
 # ASE of a symmetric matrix, given number of eigenvalues to calculate
 spectEmbed <- function(M, no, DAdjust = FALSE, opt = igraph.arpack.default) {
@@ -131,6 +108,7 @@ generateZ_nxk <- function(PI_1xk, n){
   return(Z);
 }
 
+# Assigns vertices with exact membership probabilities
 generateZ_nxk_exact <- function(PI_1xk, n){
   VCC <- PI_1xk*n;
   Z <- matrix(0, n, length(VCC));
@@ -142,6 +120,7 @@ generateZ_nxk_exact <- function(PI_1xk, n){
   return(Z);
 }
 
+# Embedded vector covariance matrix calculation
 calcCov <- function(X, x){
   d <- dim(X)[2]
   n <- dim(X)[1]
@@ -156,32 +135,65 @@ calcCov <- function(X, x){
   return(Cov)
 }
 
-makeP_Bar <- function(P,m,n){
-P_Bar <- matrix(0,n,n);
-if (m*n < 2000){
-  for (h in 1:m) {
-    g <- P2Adj(P);
-    P_Bar <- P_Bar +g;
-  }
-} else {
-  P_Bar <- foreach(mb = breakScalar(m, 3), .export = c("P2Adj")) %dopar%{
-    Ps_i = matrix(0,n,n);
-    for (h in 1:mb) {
-      g <- P2Adj(P);
-      Ps_i <- Ps_i +g;
+# Creates matrix of m averaged nxn graphs generated from the bernoulli of P
+# If Binomial TRUE draws from Binomial(P_ij,m).  If set to false, then m nxn Bernoulli matrices will be summed -> slow
+# Parallelization implemented if Binomial = False and Serial = False
+makeP_Bar <- function(P,m,n, hollow = TRUE, Binomial = TRUE, serial = FALSE){
+  P_Bar <- matrix(0,n,n);
+  if (Binomial = True) {
+    P_vect <- as.vector(P)
+    P_Bar <- rbinom(length(P_vect), m, P_vect);
+    P_Bar <- matrix(P_Bar,n);
+  }else if ((m*n < 2000)||serial == TRUE){
+    for (h in 1:m) {
+      g <- P2Adj(P, hollow = hollow);
+      P_Bar <- P_Bar +g;
     }
-    return(Ps_i)
+  } else {
+    P_Bar <- foreach(mb = breakScalar(m, 3), .export = c("P2Adj")) %dopar%{
+      Ps_i = matrix(0,n,n);
+      for (h in 1:mb) {
+        g <- P2Adj(P, hollow = hollow);
+        Ps_i <- Ps_i +g;
+      }
+      return(Ps_i)
+    }
+    P_Bar <- Reduce('+',P_Bar);
   }
-  P_Bar <- Reduce('+',P_Bar);
-}
-P_Bar <- P_Bar/m;
-return(P_Bar)
+  P_Bar <- P_Bar/m;
+  if (hollow){
+    diag(P_Bar) <- 0;
+  }
+  return(P_Bar)
 }
 
+# Implementation of Scheinerman iterarations for given iteration number
+# Convergence cut-off not yet implemented
 Schein <- function(M, rank, iter, myoptions){
   for (i in 1:iter){
     ASE <- spectEmbed(M, rank, DAdjust=FALSE, opt = myoptions)
     diag(M) <- diag(ASE$X %*% t(ASE$X));
   }
   return(ASE)
+}
+
+#Estimation of variance for zero mean random matrix defined by (P_hat-A_Bar)
+# Output is approximation for sigma^2 = (lambda_{k+1}/n)^2, where lambda_{k+1} is the (k+1)th eigenvalue of A_Bar
+calcSig= function(B, PI,m,n){
+  k = dim(B)[1];
+  s =0;
+  for (i in 1:k){
+    for (j in 1:k){
+      sig = B[i,j]*(1-B[i,j]);
+      s = s+(sig*PI[i]*PI[j]);
+    }
+  }
+  return(s/m/n*4)
+}
+
+saveFig <- function(folder, filename){
+  dev.copy(png, paste(folder, filename, "_", format(Sys.Date(), format ="%m%d%y"), ".png"))
+  dev.off();
+  dev.copy(pdf, paste(folder, filename, "_", format(Sys.Date(), format ="%m%d%y"), ".pdf"))
+  dev.off();
 }

@@ -1,4 +1,4 @@
-source("../graphFunctions.R")
+source("graphFunctions.R")
 library("combinat")
 myoptions <- igraph.arpack.default
 myoptions$maxiter <- 20000

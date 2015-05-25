@@ -181,24 +181,25 @@ for (ind in 1:length(PIs)){
 
 par(mfrow=c(1,2));
 M_mat = matrix(rep(MN_N[,1],6), ncol =6)
-inv2N = (2/(MN_N[,2]))
-matplot( M_mat[3:6,],cbind(t(eff_M[,3:6]), t(eff_M_NMF[,3:6])),type = "b", lty = c(1,1,1,2,2,2),  xlab= "M", ylab = "RE", pch = 19, lwd = 2,col = c("red", "green", "blue"))
-title("Relative Efficiency with N =100")
-legend(locator(1), c("ASE k, d = 2", "ASE k, d = 3", " ASE k, d = 4", "NMF k, d = 2", "NMF k, d = 3", " NMF k, d = 4"), lty = c(1,1,1,2,2,2), col = c("red", "green", "blue"), lwd = 2)
+invN = (1/(MN_N[,2]))
+# matplot( M_mat[3:6,],cbind(t(eff_M[,3:6]), t(eff_M_NMF[,3:6])),type = "b", lty = c(1,1,1,2,2,2),  xlab= "M", ylab = "RE", pch = 19, lwd = 2,col = c("red", "green", "blue"))
+# title("Relative Efficiency with N =100")
+# legend(locator(1), c("ASE k, d = 2", "ASE k, d = 3", " ASE k, d = 4", "NMF k, d = 2", "NMF k, d = 3", " NMF k, d = 4"), lty = c(1,1,1,2,2,2), col = c("red", "green", "blue"), lwd = 2)
 
 
-matplot( M_mat,cbind(t(eff_M[,1:6]), t(eff_M_NMF[,1:6]))/matrix(rep(inv2N,6), ncol =6),type = "b", xlab= "N", ylab = "RE*N/2",lty = c(1,1,1,2,2,2), pch = 19, lwd = 2, col = c("red", "green", "blue"))
-legend(locator(1), c("k, d = 2", "k, d = 3", "k, d = 4"), lty = c(19,19,19), col = c("red", "green", "blue"), lwd = 2)
-title("Relative Efficiency*N/2, k = 3")
+matplot( M_mat,cbind(t(eff_M[,1:7]), t(eff_M_NMF[,1:7]))/(matrix(rep(invN,6), ncol =6)),type = "b", xlab= "M", ylab = "RE*N",lty = c(1,1,1,2,2,2), pch = 19, lwd = 2, col = c("red", "blue", "green","orange","cyan","darkgreen"))
+plotCI(x = rep(MN_N[,1],6), y = as.vector(cbind(t(eff_M[,1:7]), t(eff_M_NMF[,1:7]))/(matrix(rep(invN,6), ncol =6))),uiw = as.vector(sqrt(cbind(t(eff_M_var[,1:7]), t(eff_M_var_NMF[,1:7])))/matrix(rep(invN,6), ncol =6)),col = rep(c("red", "blue", "green","orange","cyan","darkgreen"),each = 7),add=T)
+legend(locator(1), c("ASE: k, d = 2", "ASE: k, d = 3", "ASE: k, d = 4","NMF: k, d = 2", "NMF: k, d = 3", "NMF: k, d = 4"), lty = c(1,1,1,2,2,2), col = c("red", "blue", "green","orange","cyan","darkgreen"), lwd = 2)
+title("Relative Efficiency*N, N = 500")
 
-par(mfrow=c(1,2));
-M_mat = matrix(rep(MN_M[,2],6), ncol =6)
-inv2N = (2/(MN_M[,2]))
-matplot( M_mat[1:6,],cbind(t(err_M[,1:6]), t(err_M_NMF[,1:6])),type = "b", lty = c(1,1,1,2,2,2),  xlab= "M", ylab = "RE", pch = 19, lwd = 2,col = c("red", "green", "blue"))
-title("Relative Efficiency with N =100")
-legend(locator(1), c("ASE k, d = 2", "ASE k, d = 3", " ASE k, d = 4", "NMF k, d = 2", "NMF k, d = 3", " NMF k, d = 4"), lty = c(1,1,1,2,2,2), col = c("red", "green", "blue"), lwd = 2)
-
-
-matplot( M_mat,cbind(t(eff_M[,1:6]), t(eff_M_NMF[,1:7]))/matrix(rep(inv2N,7), ncol =6),type = "b", xlab= "N", ylab = "RE*N/2",lty = c(1,1,1,2,2,2), pch = 19, lwd = 2, col = c("red", "green", "blue"))
-legend(locator(1), c("k, d = 2", "k, d = 3", "k, d = 4"), lty = c(19,19,19), col = c("red", "green", "blue"), lwd = 2)
-title("Relative Efficiency*N/2, k = 3")
+# par(mfrow=c(1,2));
+# M_mat = matrix(rep(MN_M[,2],6), ncol =6)
+# inv2N = (2/(MN_M[,2]))
+# matplot( M_mat[1:6,],cbind(t(err_M[,1:6]), t(err_M_NMF[,1:6])),type = "b", lty = c(1,1,1,2,2,2),  xlab= "M", ylab = "RE", pch = 19, lwd = 2,col = c("red", "green", "blue"))
+# title("Relative Efficiency with N =100")
+# legend(locator(1), c("ASE k, d = 2", "ASE k, d = 3", " ASE k, d = 4", "NMF k, d = 2", "NMF k, d = 3", " NMF k, d = 4"), lty = c(1,1,1,2,2,2), col = c("red", "green", "blue"), lwd = 2)
+# 
+# 
+# matplot( M_mat,cbind(t(eff_M[,1:6]), t(eff_M_NMF[,1:7]))/matrix(rep(inv2N,7), ncol =6),type = "b", xlab= "N", ylab = "RE*N/2",lty = c(1,1,1,2,2,2), pch = 19, lwd = 2, col = c("red", "green", "blue"))
+# legend(locator(1), c("k, d = 2", "k, d = 3", "k, d = 4"), lty = c(19,19,19), col = c("red", "green", "blue"), lwd = 2)
+# title("Relative Efficiency*N/2, k = 3")

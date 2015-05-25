@@ -1,3 +1,4 @@
+# Examining concentration of latent space positions as a function of M
 setwd("~/Simplex/SimplexMDK/Code")
 library("igraph")
 library("vioplot")
@@ -23,12 +24,7 @@ Z <-generateZ_nxk(PI,n)
 P = Z %*% B %*% t(Z);
 
 for (i in 1:length(M)){
-  A_Bar <- matrix(0,n,n);
-  for (h in 1:M[i]) {
-    g <- P2Adj(P);
-    A_Bar <- A_Bar +g;
-  }
-  A_Bar <- A_Bar/M[i];
+  A_Bar <- makeP_Bar(P,M[i], n);
   ASE <- spectEmbed(A_Bar, k, DAdjust = TRUE, opt = myoptions)
   
   plot(ASE$X[,1],ASE$X[,2], ylim = c(-1,1), xlim = c(-1,1))
