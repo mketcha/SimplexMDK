@@ -140,10 +140,10 @@ calcCov <- function(X, x){
 # Parallelization implemented if Binomial = False and Serial = False
 makeP_Bar <- function(P,m,n, hollow = TRUE, Binomial = TRUE, serial = FALSE){
   P_Bar <- matrix(0,n,n);
-  if (Binomial = True) {
+  if (Binomial == TRUE) {
     P_vect <- as.vector(P)
     P_Bar <- rbinom(length(P_vect), m, P_vect);
-    P_Bar <- matrix(P_Bar,n);
+    P_Bar <- matrix(P_Bar,n,n);
   }else if ((m*n < 2000)||serial == TRUE){
     for (h in 1:m) {
       g <- P2Adj(P, hollow = hollow);
