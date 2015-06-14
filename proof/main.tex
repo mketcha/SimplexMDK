@@ -65,14 +65,6 @@ Since $\bar{A}_{ij}$ is the mean of $m$ i.i.d. Bernoulli random variables with p
 
 \subsection{$\hat{P}$}
 
-First, we need to prove $E[\hat{X}_i] = X_i$.
-\[
-	ARE = \lim_{n \rightarrow \infty} \frac{Var(\hat{P}_{ij})}{Var(\bar{A}_{ij})}
-    = \lim_{n \rightarrow \infty} \frac{E[(\hat{P}_{ij} - P_{ij})^2]}{E[(\bar{A}_{ij} - P_{ij})^2]}
-\]
-
-
-
 In Athreya et al. (2013), Theorem 4.8 suggests that conditioned on $X_i = \nu_k$, 
 $P \left( \sqrt{n} (\hat{X}_i - \nu_k) \le z | X_i = \nu_k \right) \rightarrow \Phi(z, \Sigma(x_i))$ as $n \rightarrow \infty$, where $\Sigma(x) = \Delta^{-1} E[X_j X_j^T (x^T X_j - (x^T X_j)^2)] \Delta^{-1}$, $\Delta = E[X_1 X_1^T]$ and $\Phi(z, \Sigma)$ denotes the cumulative distribution function for the multivariate normal, with mean zero and covariance matrix $\Sigma$, evaluated at $z$. So the sequence of random variables $\sqrt{n} (\hat{X}_i - \nu_k)$ converges in distribution to a normal distribution.
 So conditioned on $X_i = \nu_k$, we have
