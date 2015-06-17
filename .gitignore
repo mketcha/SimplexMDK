@@ -1,3 +1,25 @@
 .Rproj.user
 .Rhistory
 .RData
+*.aux
+*.log
+*.out
+*.pdfsync
+*.dropbox
+*.synctex.gz
+*.bbl
+*.brf
+*.dvi
+*.fdb_latexmk
+*.backup
+*.blg
+*~
+*.toc
+*.snm
+*.nav
+*.project
+*.idx
+*.ind
+*.ilg
+*conflicted copy*
+*sublime*

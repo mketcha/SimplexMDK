@@ -1,0 +1,103 @@
+\documentclass[10pt]{article}
+%fleqn
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{url}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage{marvosym}
+\usepackage{enumerate}
+\usepackage{subfigure}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref} 
+
+\usepackage{array}
+\usepackage{calc}
+
+\newlength\celldim
+\newlength\fontheight
+\newlength\extraheight
+\newcounter{sqcolumns}
+
+\newcolumntype{S}{
+	@{}
+	>{\centering \rule[-0.5\extraheight]{0pt}{\fontheight + \extraheight}%
+		\begin{minipage}{\celldim}\centering}
+		p{\celldim}
+		<{\end{minipage}} 
+	@{} }
+
+\newcolumntype{Z}{ @{} >{\centering} p{\celldim} @{} }
+
+\newenvironment{squarecells}[1]
+{\setlength\celldim{4.5em}%
+	\settoheight\fontheight{A}%
+	\setlength\extraheight{\celldim - \fontheight}%
+	\setcounter{sqcolumns}{#1 - 1}%
+	\begin{tabular}{|S|*{\value{sqcolumns}}{Z|}}\hline}
+	% squarecells tabular goes here
+	{\end{tabular}}
+
+\newcommand\nl{\tabularnewline\hline}
+
+\oddsidemargin 0mm
+\evensidemargin 5mm
+\topmargin -20mm
+\textheight 240mm
+\textwidth 160mm
+
+\newcommand{\vwi}{{\bf w}_i}
+
+\pagestyle{myheadings} 
+\markboth{}{Law of Large Graphs}
+
+\title{Law of Large Graphs}
+\author{}
+\date{}
+
+\begin{document}
+	\large
+	\maketitle
+	\thispagestyle{headings}
+	
+	\vspace{-.5in}
+	\section{Introduction}
+	OCP/HCP/FCP connectome setting\\
+	examples of $\bar{A}$ being used\\
+	work done with ASE/SBM\\
+	\cite{Athreya2013}
+	\cite{Cerqueira2015}
+	\cite{Fishkind2012}
+	\cite{Freer2014}\\
+	\cite{Oliveira2009}
+	
+	\section{Background and Notation}
+	
+	RDPG\\
+	SBM\\
+	ASE\\
+	ARE\\
+		\cite{Lyzinski2000}
+		\cite{Scheinerman2010}
+	\section{Theory/Proof}
+	
+	Proof for asymptotic variance of $\hat{P}$\\
+	Will lead into relative efficiency
+	\cite{Brown1977}
+	\section{Simulations}
+	Simulations for Asymptotic variance of $\hat{P}$ varying N and M.
+	Simulations for relative efficiency modifying $\rho$
+	\section{Real Data}
+	Estimates of Population Means of connectomes\\
+	Show Difference between $\bar{A}$ and $\hat{P}$\\
+	cross-validation perhaps\\
+	currently working on FCP data\\
+	\section{Discussion}
+	\cite{Ho2008}
+	NMF
+	\bibliography{Bib}{}
+	\bibliographystyle{plain}
+\end{document}
