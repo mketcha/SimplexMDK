@@ -78,9 +78,9 @@ Thus $A^{(t)} = \sum_{1 \le i \le j \le n} A^{(t)}_{ij} G_{ij}$ for $1 \le t \le
 
 Notice that random matrices $X_{ij}$ are independent and have mean zero. Also,
 \[
-	\|X_{ij}\| \le \|A_{ij}\| = 1
+	\|X_{ij}\| \le \|G_{ij}\| = 1
 \]
-as the eigenvalues of $A_{ij}$ are always contained in the set $\{-1, 0, 1\}$. Thus the assumptions of Corollary \ref{cor:Xsum} apply with $M=1$.
+as the eigenvalues of $G_{ij}$ are always contained in the set $\{-1, 0, 1\}$. Thus the assumptions of Corollary \ref{cor:Xsum} apply with $M=1$.
 
 Since
 \begin{align*}
@@ -221,7 +221,7 @@ Define $\delta_d = \min \left\{ \min_{1 \le i \le d-1} |\lambda_i - \lambda_{i+1
 \end{equation}
 \begin{equation}
 \label{eqn:XDiff}
-\|\bar{X} - \tilde{X}\|_F = \|\bar{V} \bar{S}^{1/2} - V S^{1/2}\|_F \le 6 \delta_d^{-1} (2d \log(n/\eta))^{1/2},
+\|\bar{X} - \tilde{X}\|_F = \|\bar{V} \bar{S}^{1/2} - V S^{1/2}\|_F \le 16 \delta_d^{-3/2} (2d \log(n/\eta))^{1/2},
 \end{equation}
 \end{lemma}
 \textbf{Remark:} This is an extended version of Lemma 1 in \textbf{\textit{A limit theorem for scaled eigenvectors of random dot product graphs}}. \\
@@ -256,10 +256,9 @@ For Inequality (\ref{eqn:XDiff}), first notice that
     = & \| \bar{V} ( \bar{S}^{1/2} - S^{1/2} ) \|_F + \| ( \bar{V} - V) S^{1/2} \|_F.
 \end{align*}
 
-By Proposition \ref{prop:AbarSquareDiff}, we know
+By Proposition \ref{prop:AbarSquareDiff} and Weyl's inequality, we know
 \begin{align*}
 	\lambda_i^2(|\bar{A}|) - \lambda_i^2(P) = & \lambda_i(\bar{A}^2) - \lambda_i(P^2) \\
-    \le & \lambda_i(\bar{A}^2 - P^2) why this is true? \\
     \le & \| \bar{A}^2 - P^2 \|_2 \\
     \le & \| \bar{A}^2 - P^2 \|_F \\
     \le & \sqrt{2 n^3 \log n}
@@ -272,15 +271,14 @@ Thus it holds with probability greater than $1 - \frac{2}{n^2}$ that
     \le & \frac{\sqrt{2 n^3 \log n}}{(\delta_d n)^{3/2}}
     = \sqrt{\frac{2 \log n}{\delta_d^3}}.
 \end{align*}
-Combined with Inequality (\ref{eqn:VDiff}) and Lemma \ref{lm:Snorm}, we have
+Combined with Inequality (\ref{eqn:VDiff}) and Lemma \ref{lm:Snorm}, also notice that $\delta_d \le 1$, then we have
 \begin{align*}
 	& \|\bar{V} \bar{S}^{1/2} - V S^{1/2} \|_F \\
     \le & \| \bar{V} ( \bar{S}^{1/2} - S^{1/2} ) \|_F + \| ( \bar{V} - V) S^{1/2} \|_F \\
     \le & \|\bar{V}\|_F \|\bar{S}^{1/2} - S^{1/2}\|_2 + \| \bar{V} - V\|_F \|S^{1/2}\|_2 \\
     \le & \sqrt{d} \cdot \sqrt{\frac{2 \log n}{\delta_d^3}} + 8 \delta_d^{-1} n^{-1/2} (2d \log(n/\eta))^{1/2} \cdot \sqrt{n} \\
-    = & 16 \delta_d^{-1} (2d \log(n/\eta))^{1/2}.
+    = & 16 \delta_d^{-3/2} (2d \log(n/\eta))^{1/2}.
 \end{align*}
-\todo[inline, color=green!40]{Question: I assumed $\delta_d \ge 1$ here.}
 \end{proof}
 
 
@@ -333,9 +331,9 @@ Replace $A$ with $\bar{A}$. Omitted here.
 \label{thm:clt}
 Let $(X, A^{(1)}, \cdots, A^{(m)}) \sim \mathrm{RDPG}(F)$ be $d$-dimensional random dot product graph, i.e., $F$ is a distribution for points in $\mathbb{R}^d$, and let $\bar{X}$ be our estimate for $X$ based on $\bar{A} = \frac{1}{m} \sum_{t = 1}^m A^{(t)}$. We assume $F$ has a diagonal second moment matrix with distinct positive entries along the diagonal. Let $\Phi(z, \Sigma)$ denote the cumulative distribution function for the multivariate normal, with mean zero and covariance matrix $\Sigma$, evaluated at $z$. Then there exists a sequence of orthogonal matrices $W_n$ converging to the identity almost surely such that for each component $i$ and any $z \in \mathbb{R}^d$,
 \[
-	\mathbb{P}\{ \sqrt{n}(W_n \bar{X}_i - X_i) \le z \} \rightarrow \int \Phi(z, something \delta^{-2} \Sigma(x)) dF(x)
+	\mathbb{P}\{ \sqrt{n}(W_n \bar{X}_i - X_i) \le z \} \rightarrow \int \Phi(z, \Sigma(x)) dF(x)
 \]
-where $\bar{\Sigma}(x) = something \frac{1}{m} \Delta^{-1} E \left[ X_j X_j^T (x^T X_j - (x^T X_j)^2 ) \right) \Delta^{-1}$ and $\Delta = E[X_1 X_1^T]$ is the second moment matrix. That is, the sequence of random variables $\sqrt{n}(W_n \bar{X}_i - X_i)$ converges in distribution to a mixture of multivariate normals. We denote this mixture by $\mathcal{N}(0, something \delta^{-2} \Sigma^2(X_i))$.
+where $\bar{\Sigma}(x) = \frac{1}{m} \Delta^{-1} E \left[ X_j X_j^T (x^T X_j - (x^T X_j)^2 ) \right) \Delta^{-1}$ and $\Delta = E[X_1 X_1^T]$ is the second moment matrix. That is, the sequence of random variables $\sqrt{n}(W_n \bar{X}_i - X_i)$ converges in distribution to a mixture of multivariate normals. We denote this mixture by $\mathcal{N}(0, \Sigma(X_i))$.
 \end{theorem}
 \textbf{Remark:} This is an extended version of Theorem 1 in \textbf{\textit{A limit theorem for scaled eigenvectors of random dot product graphs}}. \\
 \begin{proof}
@@ -351,114 +349,78 @@ Conditioning on $X_i = x_i$, the scaled sum
 \]
 is a sum of i.i.d, mean zero random variables with covariance matrix
 \[
-	\tilde{\Sigma}(x) = something \frac{1}{m} E \left[ X_j X_j^T (x^T X_j - (x^T X_j)^2 ) \right).
+	\tilde{\Sigma}(x) = \frac{1}{m} E \left[ X_j X_j^T (x^T X_j - (x^T X_j)^2 ) \right).
 \]
-\end{proof}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\newpage
-
-The extended version of Theorem 3.3 is that:
-
-\begin{theorem}
-\label{thm:clt}
-Let $(X, A^{(1)}, \cdots, A^{(m)}) \sim \mathrm{RDPG}(F)$ and let $\bar{X}$ be our estimate for $X$ based on $\bar{A} = \frac{1}{m} \sum_{t = 1}^m A^{(t)}$. Let $\Phi(z, \sigma^2)$ denote the normal cumulative distribution function, with mean zero and variance $\sigma^2$, evaluated at $z$. Then for each component $i$ and any $z \in \mathbb{R}$,
-\[
-	P\{ \sqrt{n}(\bar{X}_i - X_i) \le z \} \rightarrow \int \Phi(z, \delta^{-2} \sigma^2(x_i)) dF(x_i)
-\]
-where $\sigma^2(x_i) = \frac{1}{m} \left( x_i E[X_1^3] + x_i^2 E[X_1^4] \right)$ and $\delta = E[X_1^2]$. That is, the sequence of random variables $\sqrt{n}(\bar{X}_i - X_i)$ converges in distribution to a mixture of normals. We denote this mixture by $\mathcal{N}(0, \delta^{-2} \sigma^2(X_i))$.
-\end{theorem}
-\begin{proof}
-Proposition \ref{prop:Y} is extended version for Proposition 3.5 in Avanti's paper. And the rest argument would be exactly the same assuming Proposition 3.2 in Avanti's paper is true for $\bar{A}$.
-\end{proof}
-
-
-\begin{proposition}
-\label{prop:Y}
-Let $Y = \hat{\lambda}^{-1/2} \bar{A} V$ be the vector in $\mathbb{R}^n$ with components $Y_i = \bar{\lambda}^{-1/2} \sum_{j=1}^n \bar{A}_{ij} V_j$.
-Taking $X_i = x_i$ as given, we have
-\[
-	\sqrt{n}(Y_i - \frac{}{}x_i) \stackrel{\mathcal{L}}{\rightarrow} \mathcal{N}(0, \delta^{-2} \sigma^2(x_i))
-\]
-where $\sigma^2(\cdot)$ and $\delta$ are as in Theorem \ref{thm:clt}.
-\end{proposition}
-\begin{proof}
-Observe that
-\[
-	\sqrt{n}(Y_i - \frac{}{}x_i) = \frac{n}{\hat{\lambda}^{1/2}\|X\|} \cdot \frac{1}{\sqrt{n}} \left[ \left( \sum_{j \ne i} (\bar{A}_{ij} - x_i X_j) X_j ) \right) - x_i^3 \right].
-\]
-The scaled sum
-\[
- 	\frac{1}{\sqrt{n}} \left( \sum_{j \ne i} (\bar{A}_{ij} - x_i X_j) X_j  \right)
-\]
-is a sum of independent, identically distributed random variables each with mean zero and variance
-\[
-	\sigma^2(x_i) = \frac{1}{m} x_i E[X_1] + \frac{m-1}{m} x_i^2 E[X_1^2] - x_i^2 E[X_1^4].
-\]
-
-Then the rest would be the same as Proposition 3.5 in Avanti's paper.
 
 Detailed calculation for the expectation is as following:
 \begin{align*}
-	& E \left[\frac{1}{\sqrt{n}} \left( \sum_{j \ne i} (\bar{A}_{ij} - x_i X_j) X_j \right) \right] \\
-    = & \sum_{j \ne i} E\left[\frac{1}{\sqrt{n}} (\bar{A}_{ij} - x_i X_j) X_j \right] \\
-    = & \sum_{j \ne i} \frac{1}{\sqrt{n}} E\left[ \frac{1}{m} \sum_{t = 1}^m A^{(t)}_{ij} X_j - x_i X_j^2 \right]
-\end{align*}
-And
-\begin{align*}
-	& E\left[ \frac{1}{m} \sum_{t = 1}^m A^{(t)}_{ij} X_j - x_i X_j^2 \right] \\
-    = & E\left[ E\left[ \left( \frac{1}{m} \sum_{t = 1}^m A^{(t)}_{ij} X_j - x_i X_j^2\right) | X_j \right] \right] \\
-    = & E\left[ \frac{1}{m} \sum_{t = 1}^m A^{(t)}_{ij} X_j - x_i X_j^2 \right] \\
-    = & E\left[  \frac{1}{m} \sum_{t = 1}^m x_i X_j^2 - x_i X_j^2 \right] \\
+	& E \left[ (\bar{A}_{ij} - x_i^T X_j) X_j \right] \\
+    = & E\left[ \frac{1}{m} \sum_{t = 1}^m A^{(t)}_{ij} X_j - (x_i^T X_j) X_j \right] \\
+    = & E\left[ E\left[ \left( \frac{1}{m} \sum_{t = 1}^m A^{(t)}_{ij} X_j - (x_i^T X_j) X_j \right) | X_j \right] \right] \\
+    = & E\left[  \frac{1}{m} \sum_{t = 1}^m (x_i^T X_j) X_j - (x_i^T X_j) X_j \right] \\
     = & 0
 \end{align*}
 since $A_{ij}^{(t)}$ is Bernoulli with probability $x_i X_j$.
 
 Similarly, detailed calculation for the variance is as following:
 \begin{align*}
-	& Var \left( (\bar{A}_{ij} - x_i X_j) X_j \right) \\
-    = & Var \left(\bar{A}_{ij} X_j - x_i X_j^2 \right) \\
-    = & E \left[ \left( \bar{A}_{ij} X_j - x_i X_j^2 \right)^2 \right] \\
-    = & E \left[ \bar{A}_{ij}^2 X_j^2 + x_i^2 X_j^4 - 2 x_i X_j^3 \bar{A}_{ij} \right] \\
-    = & E \left[ E \left[ \bar{A}_{ij}^2 X_j^2 + x_i^2 X_j^4 - 2 x_i X_j^3 \bar{A}_{ij} | X_j \right] \right] \\
-    = & E \left[ Var(\bar{A}_{ij} X_j) + E[\bar{A}_{ij} X_j]^2 - x_i^2 X_j^4 \right] \\
-    = & E \left[ \frac{1}{m^2} \sum_{t=1}^m Var(A_{ij}^{(t)} X_j) + x_i^2 X_j^4 - x_i^2 X_j^4 \right] \\
-    = & E \left[ \frac{1}{m^2} \sum_{t=1}^m (x_i X_j^3 - x_i^2 X_j^4) \right] \\
-    = & \frac{1}{m} (x_i X_j^3 - x_i^2 X_j^4).
+	& Cov \left( (\bar{A}_{ij} - x_i^T X_j) X_j \right) \\
+    = & Cov \left(\bar{A}_{ij} X_j - (x_i^T X_j) X_j \right) \\
+    = & E \left[ (\bar{A}_{ij} - x_i^T X_j)^2 X_j X_j^T \right] \\
+    = & E \left[ (\bar{A}_{ij}^2 - 2 \bar{A}_{ij} x_i^T X_j + (x_i^T X_j)^2) X_j X_j^T \right] \\
+    = & E \left[ E \left[ (\bar{A}_{ij}^2 - 2 \bar{A}_{ij} x_i^T X_j + (x_i^T X_j)^2) X_j X_j^T | X_j \right] \right] \\
+    = & E \left[ E[\bar{A}_{ij}^2] X_j X_j^T - 2(x_i^T X_j) X_j X_j^T E[\bar{A}_{ij}] + (x_i^T X_j)^2 X_j X_j^T \right] \\
+    = & E \left[ (Var(\bar{A}_{ij}) + E[\bar{A}_{ij}]^2) X_j X_j^T - 2(x_i^T X_j)^2 X_j X_j^T + (x_i^T X_j)^2 X_j X_j^T \right] \\
+    = & E \left[ (\frac{1}{m} x_i^T X_j (1 - x_i^T X_j) + (x_i^T X_j)^2) X_j X_j^T - 2(x_i^T X_j)^2 X_j X_j^T + (x_i^T X_j)^2 X_j X_j^T \right] \\
+    = & \frac{1}{m} E \left[ X_j X_j^T (x_i^T X_j (1 - x_i^T X_j)) \right].
 \end{align*}
 
 
+Therefore, by the classical multivariate central limit theorem and Slutsky's theorem in the multivariate setting, we have
+\[
+	\left( \frac{1}{\sqrt{n}} \sum_{j \ne i}(\bar{A}_{ij} - x_i^T X_j) X_j - \frac{x_i^T x_i}{\sqrt{n}} x_i \right) \stackrel{\mathcal{L}}{\rightarrow} \mathcal{N}(0, \tilde{\Sigma}(x_i)).
+\]
+The strong law of large numbers ensures that $n S^{-1} = n (\tilde{X}^T \tilde{X})^{-1} \rightarrow \Delta^{-1} = (E(X_1 X_1^T))^{-1}$ almost surely. In addition,
+\[
+	\frac{1}{n} X^T X =  \frac{1}{n} W_n \tilde{X}^T \tilde{X} W_n^T = W_n (S/n) W_n^T \rightarrow W_n \Delta W_n^T
+\]
+almost surely. Thus we have $W_n \rightarrow I$ almost surely. Hence, by Slutsky's theorem in the multivariate setting, we have, conditional on $X_i = x_i$, that
+\[
+	\sqrt{n}(Y_i - \tilde{X}_i) \stackrel{\mathcal{L}}{\rightarrow} \mathcal{N}(0, \Delta^{-1} \tilde{\Sigma}(x_i) \Delta^{-1}) = \mathcal{N}(0, \bar{\Sigma}(x_i)).
+\]
 
+The rest are the same.
 \end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
