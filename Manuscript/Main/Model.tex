@@ -1,5 +1,5 @@
 \section{Model}
-We present, with theory, a comparison of two estimators for the mean of unweighted graphs.  This work considers the scenario of having M unweighted and undirected hollow graphs stored as adjacency matrices, $A_m$, each having N vertices with known correspondence.  In this setting, we consider each graph to be a random graph, in that it is sampled from a common edge-wise probability matrix $P$, which we aim to estimate using our finite sample of graphs.
+We present, with theory, a comparison of two estimators for the mean of a collection of graphs.  This work considers the scenario of having M unweighted and undirected hollow graphs stored as adjacency matrices, $A_m$, each having N vertices with known correspondence.  In this setting, we consider each graph to be a random graph, in that it is sampled from a common edge-wise probability matrix $P$, which we aim to estimate using our finite sample of graphs.
 \subsection{Maximum Likelihood Estimation}
 Maximum likelihood estimation is a common approach to parameter estimation and is the basis for using $\bar{A}$ when estimating the mean graph from a sample.
 \begin{equation}
@@ -23,4 +23,4 @@ To compare the performance between $\hat{P}$ and $\bar{A}$, we examine the relat
 \begin{equation}
 RE_{ij} = \frac{Var(\hat{P}_{ij})}{Var(\bar{A}_{ij})}
 \end{equation}
-This comparison is valid as long as both $\bar{A}$ and $\hat{P}$ are asymptotically unbiased.  It is known that $\bar{A}$ is unbiased, being simply the mean of M Bernoulli trials. As for $\hat{P}$, we know it to be a low row approximation of $\bar{A}$ and thus its expectation is $\bar{A}$, which is an unbiased estimator for P. Thus the expectation for $\hat{P}$ is P as well, satisfying the condition.
+This comparison is valid as long as both $\bar{A}$ and $\hat{P}$ are consistent estimators in that they are asymptotically unbiased.  It is known that $\bar{A}$ is unbiased, being simply the mean of M Bernoulli trials. As for $\hat{P}$, we know it to be a low row approximation of $\bar{A}$ and thus its expectation is $\bar{A}$, which is an unbiased estimator for P. Thus the expectation for $\hat{P}$ is P as well, satisfying the condition.

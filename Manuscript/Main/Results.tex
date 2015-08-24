@@ -4,7 +4,7 @@ We show that, given large N, for an SBM the relative efficiency between $\hat{P}
 \begin{equation}
 RE_{ij} =\frac{Var(\hat{P}_{ij})}{Var(\bar{A}_{ij})} = \frac{1/\rho_i + 1/\rho_j}{N}
 \end{equation}
-This comes from a proof (outlined in section 4.X) for the variance of $\hat{P}_{ij}$ under the condition that N is large:
+This comes from a proof (outlined in section 5.X) for the variance of $\hat{P}_{ij}$ under the condition that N is large:
 \begin{equation}
 Var(\hat{P}_{ij}) = \frac{(1/\rho_i + 1/\rho_j)P_{ij}(1-P_{ij})}{NM}
 \end{equation}
@@ -63,7 +63,9 @@ Figure 3 demonstrates the effect of different block membership, $\rho$, values o
 \end{figure}
 \subsection{CoRR Brain Graphs: Cross-Validation}
 	
-	To demonstate that the $\hat{P}$ estimate is valid under data that does not perfectly follow an SBM, we examine a set of 464 brain connectomes generated from fMRI scans available at the Consortium for Reliability and Reproducibility (CoRR).  Details on this dataset and connectiome generation can be seen in section x.x.  The connectomes generated each have 788 vertices, with anatomical correspondence. To compare $\bar{A}$ and $\hat{P}$ we perform a cross-validation study to examine the impact of the number of available graphs, M.  For each sample size M, we randomly sample M adjacency matrices from the CoRR data set and estimate the mean with both $\bar{A}$ and $\hat{P}$.  We then calculated the MSE of these estimators compared to the test mean, defined to be the $\bar{A}$ estimate of the $464-m$ remaining samples. 
+	To demonstate that the $\hat{P}$ estimate is valid under data that does not perfectly follow an SBM, we examine a set of 464 brain connectomes generated from fMRI scans available at the Consortium for Reliability and Reproducibility (CoRR).  Details on this dataset and connectiome generation can be seen in section x.x.  The connectomes generated each have 788 vertices, with anatomical correspondence. To compare $\bar{A}$ and $\hat{P}$ we perform a cross-validation study to examine the impact of the number of available graphs, M.  For each sample size M, we randomly sample M adjacency matrices from the CoRR data set and estimate the mean with both $\bar{A}$ and $\hat{P}$.  We then calculated the MSE of these estimators compared to the test mean, defined to be the $\bar{A}$ estimate of the ($464-m$) remaining samples.
+	
+	Figure 4 demonstrates that for this dataset, the $\hat{P}$ estimate outperforms $\bar{A}$ in MSE, justifying that the $\hat{P}$ is a valid and likely more accurate estimate of $P$ even when the data does not perfectly follow an SBM.
 	
 	\begin{figure}[!htb]
 		\centering
