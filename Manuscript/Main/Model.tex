@@ -1,0 +1,26 @@
+\section{Model}
+We present, with theory, a comparison of two estimators for the mean of unweighted graphs.  This work considers the scenario of having M unweighted and undirected hollow graphs stored as adjacency matrices, $A_m$, each having N vertices with known correspondence.  In this setting, we consider each graph to be a random graph, in that it is sampled from a common edge-wise probability matrix $P$, which we aim to estimate using our finite sample of graphs.
+\subsection{Maximum Likelihood Estimation}
+Maximum likelihood estimation is a common approach to parameter estimation and is the basis for using $\bar{A}$ when estimating the mean graph from a sample.
+\begin{equation}
+\bar{A} = \frac{1}{M}\sum\limits_{m = 1}^M A_m
+\end{equation}
+In this approach each element of the adjacency matrix $A_{ij}$ is treated as an independent Bernoulli random variable with probability $P_{ij}$.  Therefore, with each element treated independently, to estimate the mean graph $P$ the maximum likelihood approach indicates that one should take the element-wise mean, $\bar{A}$.
+\subsection{Model Assumption: Stochastic Block Model}
+It is often useful when analyzing graphs, particularly in the case of large N, to make the assumption that many of the vertices do not behave independently and that there is a community structure where collections of vertices behave similarly in their connections. The model we use in this paper to depict this community structure the stochastic block model (SBM).  The SBM is defined by the parameters $k$, $\rho$, and $B$. In this model each vertex is assigned to one of $k$ communities with the probability of being assigned to the $i$ th community designated as $\rho_i$.  The properties of this community structure is stored in the symmetric $k\times k$ block matrix $B$, where $B_{ij}$ represents the probability of an edge existing between a vertex of community $i$ and one of community $j$.
+
+(Add picture of a block model adjacency matrix for clarification)
+
+\subsection{Latent Position Model}
+A model for random graphs proposed by Hoff et. al. is the latent position model.  In this model, each vertex has an associated latent vector, and the probability of a edge being present between two vertices is dependent only on their latent vectors. \cite{Hoff}  A specific instance of this model that we will examine is the random dot product graph (RDPG) in which the probability of an edge being present between two nodes is the dot product of their latent vectors.\cite{Schein}
+
+\subsection{Adjacency Spectral Embedding: $\hat{P}$}
+In order to expose the underlying block structure within a graph, Sussman et. al. proposed adjacency spectral embedding (ASE) to enforce a low rank$-k$ approximation on the adjacency matrix \cite{Sussman2012}.  This embedding creates a RDPG representation of the adjacency matrix from its low rank eigen decomposition.  The latent vectors are stored in the $N \times k$ matrix $X$, where the columns are comprised of the eigenvectors associated with the $k$ largest eigenvalues, in absolute value, of the adjacency matrix.  With this embedding, $X$, each row is then a latent vector for its corresponding vertex.
+
+In this work, we extend ASE to embed the mean matrix $\bar{A}$, rather than the adjacency matrix alone.  By making the assumption that there is an underlying SBM structure to graphs, enforcing this low rank approximation on $\bar{A}$ will provide a better estimate for the true mean matrix, $P$.  We will refer to this new estimate as $\hat{P}$ = $XX^T$.  Details of this algorithm are presented in section 5.
+\subsection{Performance Evaluation: Relative Efficiency}
+To compare the performance between $\hat{P}$ and $\bar{A}$, we examine the relative efficiency (RE) among the two defined as:
+\begin{equation}
+RE_{ij} = \frac{Var(\hat{P}_{ij})}{Var(\bar{A}_{ij})}
+\end{equation}
+This comparison is valid as long as both $\bar{A}$ and $\hat{P}$ are asymptotically unbiased.  It is known that $\bar{A}$ is unbiased, being simply the mean of M Bernoulli trials. As for $\hat{P}$, we know it to be a low row approximation of $\bar{A}$ and thus its expectation is $\bar{A}$, which is an unbiased estimator for P. Thus the expectation for $\hat{P}$ is P as well, satisfying the condition.

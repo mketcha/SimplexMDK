@@ -1,0 +1,114 @@
+\documentclass[10pt]{article}
+%fleqn
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{url}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage{marvosym}
+\usepackage{enumerate}
+\usepackage{subfigure}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref} 
+
+\usepackage{array}
+\usepackage{calc}
+
+\newlength\celldim
+\newlength\fontheight
+\newlength\extraheight
+\newcounter{sqcolumns}
+
+\newcolumntype{S}{
+	@{}
+	>{\centering \rule[-0.5\extraheight]{0pt}{\fontheight + \extraheight}%
+		\begin{minipage}{\celldim}\centering}
+		p{\celldim}
+		<{\end{minipage}} 
+	@{} }
+
+\newcolumntype{Z}{ @{} >{\centering} p{\celldim} @{} }
+
+\newenvironment{squarecells}[1]
+{\setlength\celldim{4.5em}%
+	\settoheight\fontheight{A}%
+	\setlength\extraheight{\celldim - \fontheight}%
+	\setcounter{sqcolumns}{#1 - 1}%
+	\begin{tabular}{|S|*{\value{sqcolumns}}{Z|}}\hline}
+	% squarecells tabular goes here
+	{\end{tabular}}
+
+\newcommand\nl{\tabularnewline\hline}
+
+\oddsidemargin 0mm
+\evensidemargin 5mm
+\topmargin -20mm
+\textheight 240mm
+\textwidth 160mm
+
+\newcommand{\vwi}{{\bf w}_i}
+
+\pagestyle{myheadings} 
+\markboth{}{Law of Large Graphs}
+
+\title{Law of Large Graphs}
+\author{}
+\date{}
+
+\begin{document}
+	\large
+	\maketitle
+	\thispagestyle{headings}
+	
+	\vspace{-.5in}
+	\section{Introduction}
+	OCP/HCP/FCP connectome setting\\
+	examples of $\bar{A}$ being used\\
+	Looking for better estimators of “mean” graph by making assumption that many vertices will behave similarly\\
+	\cite{Athreya2013}
+	\cite{Cerqueira2015}
+	\cite{Fishkind2012}
+	\cite{Freer2014}\\
+	\cite{Oliveira2009}
+	
+	\section{Model}
+	\subsection{MLE}
+		Bernoulli says use ABar
+	\subsection{RDPG}
+	\subsection{Model Assumption: SBM}
+	\subsection{ASE: PHat}
+	dimension reduction, helps reduce variance, explanation that it is asymp unbiased.
+	\subsection{Performance Evaluation: ARE}
+	Defn and importance of asymp unbiased\\
+		\cite{Lyzinski2000}
+		\cite{Scheinerman2010}
+	\section{Results}
+	\subsection{Main Result}
+		RE Eqn from var(PHat) eqn\\
+	\subsection{Validation with simulated data}
+		showing variance and RE simulations against expectations.
+	\subsection{Performance on Real Data}
+		cross-validation different dimensions of PHat vs. ABar\\
+		Perhaps permutation tests
+		
+	\section{Discussion}
+	Given the popularity of large N connectome datasets that have known vertex correspondence, perhaps ASE should be chosen over ABar when estimating a group averaged graph.
+	NMF may be even better estimate than ASE.
+		\cite{Ho2008}
+	\section{Methods}
+	\subsection{Algorithm}
+	\subsection{Choosing Dimension}
+	Zhu and Ghodsi
+	\subsection{Dealing with Diagonal}
+	Scheinerman Iterations
+	\subsection{Dataset Description}
+	CoRR
+	\subsection{Source code and data}
+	\subsection{Proof of Var(PHat)}
+	We are assuming that it should be condensed. Perhaps reference full proof uploaded to arxiv?
+	\bibliography{Bib}{}
+	\bibliographystyle{plain}
+\end{document}
