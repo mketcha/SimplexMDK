@@ -4,18 +4,26 @@
 	\begin{enumerate}
 		\item Calculate $\bar{A} = \frac{1}{M}\sum\limits_{m = 1}^M A_m$
 		\item Estimate SBM parameter $k$ (see section 5.2)
-		\item Form the matrix $X \in R^{n \times k}$ with the columns in $X$ consisting of the eigenvectors corresponding to the largest, in absolute value, eigenvalues of $\bar{A}$, with the diagonal entries augmented (see section 5.3).
+		\item Form the matrix $X \in R^{n \times k}$ with the columns in $X$ consisting of the eigenvectors corresponding to the largest eigenvalues of $\bar{A}$, with the diagonal entries augmented (see section 5.3).
 		\item  $\hat{P} = XX^{T}$
 	\end{enumerate}	
 	\subsection{Choosing Dimension}
 	Often in dimensionality reduction techniques, the choice for dimension, $k$, relies on visually analyzing a plot of the ordered eigenvalues, looking for a "gap" or "elbow" in this scree-plot.  Zhu and Ghodsi \cite{Zhu2006} present an automated method for finding this gap in the scree-plot that takes only the ordered eigenvalues as an input.  In order to prevent underestimating $k$, which is much more harmful than over-estimating, we initialize $k_0 = 0$ and iterate over the Zhu and Ghodsi algorithm by removing the first $k_{i-1}$ eigenvalues from calculation at each iteration to determine the location of the "next elbow".  For the experiments performed in this work, we choose $k$ to be $k_3$ under this approach.
 	
-	(Show the scree plot for a connectome here)
+	(Show the scree plot for a connectome here and Corr data set effect of M on k)
 	
 	\subsection{Graph Diagonal Augmentation}
-	The graphs examined in this work are hollow, in that there are no self-loops and thus the diagonal entries of the adjacency matrix are 0.  This creates a bias in the calculation of the eigenvectors.  We minimize this bias by using an iterative method developed by Scheinerman and Tucker \cite{Scheinerman2010}. In this method, steps 3 and 4 of the $\hat{P}$ algorithm are repeated, each time replacing the diagonal component of $\bar{A}$ with the diagonal of $\hat{P}$, until $\hat{P}$ converges.
+	The graphs examined in this work are hollow, in that there are no self-loops and thus the diagonal entries of the adjacency matrix are 0.  This leads to a bias in the calculation of the eigenvectors.  We minimize this bias by using an iterative method developed by Scheinerman and Tucker \cite{Scheinerman2010}. In this method, steps 3 and 4 of the $\hat{P}$ algorithm are repeated, each time replacing the diagonal component of $\bar{A}$ with the diagonal of $\hat{P}$, until $\hat{P}$ converges.
 	\subsection{Dataset Description}
 	The connectomes analyzed were created from resting state functional MRI (fMRI) and Diffusion Tensor Imaging (DTI) scans from the Consortium for Reliability and Reproducibility (CoRR) and are available via the International Neuroimaging Data-sharing Initiative (INDI).  The SWU 4 - Southwest University image collection was used to generate 464 connectomes with 788 anatomically corresponding vertices.  (Need to describe how graphs were made with reference, will ask eric bridgeford)
 	\subsection{Source code and data}
-	\subsection{Proof of Var($\hat{P}$)}
-	Here we provide an outline of the proof for the Var($\hat{P}$) result presented in section 3.1.  The full proof is provided at ...
+	\subsection{Outline for Proof of Relative Efficiency}
+	Here we provide an outline of the proof for the MSE($\hat{P}$) result presented in section 3.1.
+	
+	When comparing two estimators, the first thing we need to consider is consistency.
+	It is easy to see that $\bar{A}$ is unbiased as an estimate of $P$. Moreover, since two latent positions are conditionally asymptotically independent by extended version of Corollary 4.11 in Athreya et al. (2013), we know $\hat{P}$ is consistent, as well as $\bar{A}$.
+	
+	Thus the relative efficiency between $\hat{P}$ and $\bar{A}$, which is equivalent to the ratio of mean square errors in this case, is a good indicate in comparison.
+	Since $\hat{P}_{ij} = \hat{X}_i^T \hat{X}_j$ is a noisy version of the dot product of $\nu_s^T \nu_t$, by Equation 5 in Brown and Rutemiller (1977), combined with asymptotic independence between $\hat{X}_i$ and $\hat{X}_j$, and the covariance matrices given by extended version of Corollary 4.11 in Athreya et al. (2013), we have the variance of $\hat{P}_{ij}$ converges to $\left( 1/\rho_{\tau_i} + 1/\rho_{\tau_j} \right) P_{ij} (1-P_{ij})/(n \cdot m)$ as $n \rightarrow \infty$. Since the variance of $\bar{A}_{ij}$ is $P_{ij} (1-P_{ij})/m$, the relative efficiency between $\hat{P}_{ij}$ and $\bar{A}_{ij}$ is approximately $(\rho_{\tau_i}^{-1} + \rho_{\tau_j}^{-1})/n$ when $n$ is sufficiently large.
+	
+	The full proof is provided at ...
