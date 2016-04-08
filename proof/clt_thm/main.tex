@@ -1,0 +1,436 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\usepackage{theorem}
+\usepackage{amssymb}
+
+\usepackage{hyperref}
+
+\newenvironment{proof}{{\bf Proof:  }}{\hfill\rule{2mm}{2mm}}
+
+\newtheorem{fact}{Fact}[section]
+\newtheorem{lemma}[fact]{Lemma}
+\newtheorem{theorem}[fact]{Theorem}
+\newtheorem{definition}[fact]{Definition}
+\newtheorem{corollary}[fact]{Corollary}
+\newtheorem{proposition}[fact]{Proposition}
+\newtheorem{claim}[fact]{Claim}
+\newtheorem{exercise}[fact]{Exercise}
+
+
+
+\title{Extended Avanti's CLT Theorem}
+
+\author{Runze}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+All notations in this writeup are according to the latest version of \textbf{\textit{A limit theorem for scaled eigenvectors of random dot product graphs}}.
+
+
+
+
+\begin{corollary}
+\label{cor:Xsum}
+Let $X_1, \cdots, X_n$ be mean-zero independent random matrices, defined on a common probability space $(\Omega, \mathcal{F}, \mathbb{P})$, with values in $\mathbb{C}_{\mathrm{Herm}}^{d \times d}$ and such that there exists a $M > 0$ with $\|X_i\| \le M$ almost surely for all $1 \le i \le m$.
+Define $\sigma^2 \equiv \lambda_{\max} \left( \sum_{i=1}^n \mathbb{E}[X_i^2] \right)$. Then for all $t\ge 0$,
+\[
+	\mathbb{P} \left( \lambda_{\max} \left( \sum_{i=1}^n X_i \right) \ge t \right) \le d e^{- \frac{t^2}{8 \sigma^2 + 4 M t}},
+\]
+and
+\[
+	\mathbb{P} \left( \left\| \sum_{i=1}^n X_i \right\| \ge t \right) \le 2d e^{- \frac{t^2}{8 \sigma^2 + 4 M t}}.
+\]
+\end{corollary}
+\textbf{Remark:} See Corollary 7.1 in \href{url}{http://arxiv.org/pdf/0911.0600v2.pdf}.
+
+
+
+
+
+\begin{theorem}
+\label{thm:AbarDiff}
+Let $P:[n]^2 \rightarrow [0,1]$ be symmetric, and $A^{(1)}, \cdots, A^{(m)} \stackrel{iid}{\sim} \mathrm{Bern}(P)$ also be symmetric. Define $\bar{A} = \frac{1}{m} \sum_{t = 1}^m A^{(t)}$, then for any constant $c > 0$ there exists another constant $n_0(c)$, independent of $n$ or $P$, such that if $n > n_0$, then for all $\eta$ satisfying $n^{-c} \le \eta \le 1/2$,
+\[
+	\mathbb{P} \left( \| \bar{A} - P \| \le 4 \sqrt{n \ln(n/\eta)} \right) \ge 1 - \eta.
+\]
+\end{theorem}
+\textbf{Remark:} This is the extended version of Theorem 3.1 in \href{url}{http://arxiv.org/pdf/0911.0600v2.pdf}.
+\begin{proof}
+Let $\{e_i\}_{i=1}^n$ be the canonical basis for $\mathbb{R}^n$. For each $1 \le i, j \le n$, define a corresponding matrix $G_{ij}$:
+\[
+    G_{ij} \equiv \left\{
+    \begin{array}{l l}
+        e_i e_j^T + e_j e_i^T, \quad & i \ne j;\\
+        e_i e_i^T, \quad & i = j.
+    \end{array}
+    \right.
+\]
+Thus $A^{(t)} = \sum_{1 \le i \le j \le n} A^{(t)}_{ij} G_{ij}$ for $1 \le t \le m$, $\bar{A} = \sum_{1 \le i \le j \le n} \frac{1}{m} \sum_{t = 1}^m A^{(t)}_{ij} G_{ij}$ and $P = \sum_{1 \le i \le j \le n} P_{ij} G_{ij}$. Then we have $\bar{A} - P = \sum_{1 \le i \le j \le n} X_{ij}$, where $X_{ij} \equiv \left( \frac{1}{m} \sum_{t=1}^m A_{ij}^{(t)} - P_{ij} \right) G_{ij}$, $1 \le i \le j \le n$.
+
+Notice that random matrices $X_{ij}$ are independent and have mean zero. Also,
+\[
+	\|X_{ij}\| \le \|G_{ij}\| = 1
+\]
+as the eigenvalues of $G_{ij}$ are always contained in the set $\{-1, 0, 1\}$. Thus the assumptions of Corollary \ref{cor:Xsum} apply with $M=1$.
+
+Since
+\begin{align*}
+	\mathbb{E}[X_{ij}^2] = & Var(X_{ij}) \\
+    = &	Var \left( \frac{1}{m} \sum_{t=1}^m A_{ij}^{(t)} - P_{ij} \right) G_{ij}^2 \\
+    = &	Var \left( \frac{1}{m} \sum_{t=1}^m A_{ij}^{(t)} \right) G_{ij}^2 \\
+    = & \frac{1}{m} Var(A_{ij}^{(t)}) G_{ij}^2 \\
+    = & \frac{1}{m} P_{ij} (1-P_{ij}) G_{ij}^2
+\end{align*}
+and
+\[
+    G_{ij}^2 \equiv \left\{
+    \begin{array}{l l}
+        e_i e_i^T + e_j e_j^T, \quad & i \ne j;\\
+        e_i e_i^T, \quad & i = j.
+    \end{array}
+    \right.
+\]
+Therefore,
+\begin{align*}
+	\sum_{i \le j} \mathbb{E}[X_{ij}^2] & = \sum_i \frac{1}{m} P_{ii} (1-P_{ii}) e_i e_i^T +
+\sum_{i<j} \frac{1}{m} P_{ij} (1-P_{ij}) (e_i e_i^T + e_j e_j^T) \\
+	& = \sum_{i=1}^n \left( \frac{1}{m} \sum_{j=1}^n P_{ij} (1-P_{ij}) \right) e_i e_i^T.
+\end{align*}
+This is a diagonal matrix. Define $\Delta \equiv \max_{i \in [n]} d_P(i)$, then its largest eigenvalue is at most
+\[
+	\max_{i \in [n]} \left( \frac{1}{m} \sum_{j=1}^n P_{ij} (1-P_{ij}) \right)
+    \le \max_{i \in [n]} \frac{1}{m} \sum_{j=1}^n P_{ij} = \Delta/m.
+\]
+
+Apply Corollary \ref{cor:Xsum} with $\sigma^2 = \Delta/m$ and $M = 1$, we get for any $t>0$, $m \ge 1$,
+\begin{equation}
+\label{eqn:t}
+	\mathbb{P}(\| \bar{A} - P \| \ge t) \le 2n e^{- \frac{t^2}{8 \Delta/m + 4t}}
+    \le 2n e^{- \frac{t^2}{8n + 4t}}.
+\end{equation}
+
+Now let $c > 0$ be given and assume $n^{-c} \le \eta \le 1/2$. Then there exists a $n_0(c)$ independent of $n$ and $P$ such that whenever $n > n_0(c)$,
+\[
+	t = 4 \sqrt{n \ln(2n/\eta)} \le 2 n.
+\]
+
+Plugging this $t$ into Equation (\ref{eqn:t}), we get
+\[
+	\mathbb{P}(\| \bar{A} - P \| \ge 4 \sqrt{n \ln(2n/\eta)})
+    \le 2n e^{-\frac{t^2}{16 n}} = 2n e^{-\frac{16 n \ln(2n/\eta)}{16 n}} = \eta.
+\]
+\end{proof}
+
+
+
+
+
+
+
+\begin{proposition}
+\label{prop:AbarSquareDiff}
+It holds with probability greater than $1 - \frac{2}{n^2}$ that
+\[
+      \| \bar{A}^2 - P^2 \|_F \le \sqrt{2 n^3 \log n}.
+\]
+\end{proposition}
+\textbf{Remark:} This is Proposition 4.2 in \href{url}{http://arxiv.org/pdf/1207.6745.pdf}.
+
+\noindent
+\begin{proof}
+Notice that $\bar{A}_{ij}^2 = \sum_{k=1}^n \bar{A}_{ik} \bar{A}_{kj}$ is a sum of $n$ independent random variables between 0 and 1. Since $E[\bar{A}_{ij}^2] = P_{ij}^2$, by Hoeffding's inequality, we have
+\[
+	\mathbb{P}\left( |A_{ij}^2 - P_{ij}^2| > \sqrt{2 n \log n} \right)
+    \le 2 \exp \left( - \frac{4 n \log n}{n} \right)
+    = \frac{2}{n^4}.
+\]
+Using a union bound, we have
+\begin{align*}
+	\mathbb{P} \left( \|A^2 - P^2\|_F > \sqrt{2 n^3 \log n} \right)
+    & \le \mathbb{P} \left( \cup_{i,j} \left\{ |A_{ij}^2 - P_{ij}^2| > \sqrt{2 n \log n} \right\} \right) \\
+    & \le \sum_{i,j} \mathbb{P} \left( |A_{ij}^2 - P_{ij}^2| > \sqrt{2 n \log n} \right) \\
+    & = \sum_{i,j} \frac{2}{n^4}
+    = \frac{2}{n^2}.
+\end{align*}
+\end{proof}
+
+
+
+
+
+
+
+
+\begin{proposition}
+\label{prop:eigengap}
+Assuming that the matrix $\mathbb{E}[X X^T]$ is rank $d$ and has distinct eigenvalues. Also we suppose there exists $\delta > 0$ such that $\delta < \min_{i \ne j} |\lambda_i(\mathbb{E}[X X^T]) - \lambda_j(\mathbb{E}[X X^T])|$ and $\delta < \lambda_d(\mathbb{E}[X X^T]$. For $i, j \le d+1$, $i \ne j$ and $n$ sufficiently large, it holds with probability greater than $1 - \frac{2d^2}{n^2}$ that
+\[
+	|\lambda_i(P) - \lambda_j(P)| > \delta n / 2.
+\]
+\end{proposition}
+\textbf{Remark:} This is Proposition 4.3 in \href{url}{http://arxiv.org/pdf/1207.6745.pdf}.
+
+
+
+
+
+\begin{lemma}
+\label{lm:Snorm}
+Let $(X, A^{(1)}, \cdots, A^{(m)}) \sim \mathrm{RDPG}(F)$ and let $\bar{X} = \bar{V} \bar{S}^{1/2}$ be our estimate for $X$ based on $\bar{A} = \frac{1}{m} \sum_{t = 1}^m A^{(t)}$.
+Define $\delta_d = \min \left\{ \min_{1 \le i \le d-1} |\lambda_i - \lambda_{i+1}|, \lambda_d \right\}$ where $\lambda_1 > \lambda_2 > \cdots > \lambda_d$ are the ordered, distinct, positive eigenvalues of $\Delta$. For $n$ sufficiently large, following bounds hold with probability greater than $1-\eta$,
+\[
+	\frac{\delta_d n}{2} \le \|S\| \le n,
+\]
+\[
+	\frac{\delta_d n}{2} \le \|\bar{S}\| \le n.
+\]
+\end{lemma}
+\textbf{Remark:} This is an extended version of Lemma 1 in \textbf{\textit{A limit theorem for scaled eigenvectors of random dot product graphs}}. \\
+\noindent
+\begin{proof}
+To be continue.
+\end{proof}
+
+
+
+
+
+
+
+
+\begin{lemma}
+\label{lm:AllDiff}
+Let $(X, A^{(1)}, \cdots, A^{(m)}) \sim \mathrm{RDPG}(F)$ and let $\bar{X} = \bar{V} \bar{S}^{1/2}$ be our estimate for $X$ based on $\bar{A} = \frac{1}{m} \sum_{t = 1}^m A^{(t)}$.
+Define $\delta_d = \min \left\{ \min_{1 \le i \le d-1} |\lambda_i - \lambda_{i+1}|, \lambda_d \right\}$ where $\lambda_1 > \lambda_2 > \cdots > \lambda_d$ are the ordered, distinct, positive eigenvalues of $\Delta$. Let $c$ be arbitrary. There exists a constant $n_0(c)$ such that if $n > n_0$, then for any $\eta$ satisfying $n^{-c} < \eta < 1/2$, the following bounds hold with probability greater than $1-\eta$,
+\begin{equation}
+\label{eqn:AbarDiff}
+\|X X^T - \bar{A}\| \le 4(n \log(n/\eta))^{1/2},
+\end{equation}
+\begin{equation}
+\label{eqn:VDiff}
+\|\bar{V} - V\|_F \le 8 \delta_d^{-1} n^{-1/2} (2d \log(n/\eta))^{1/2}.
+\end{equation}
+\begin{equation}
+\label{eqn:XDiff}
+\|\bar{X} - \tilde{X}\|_F = \|\bar{V} \bar{S}^{1/2} - V S^{1/2}\|_F \le 16 \delta_d^{-3/2} (2d \log(n/\eta))^{1/2},
+\end{equation}
+\end{lemma}
+\textbf{Remark:} This is an extended version of Lemma 1 in \textbf{\textit{A limit theorem for scaled eigenvectors of random dot product graphs}}. \\
+\noindent
+\begin{proof}
+By Theorem \ref{thm:AbarDiff}, we get Inequality (\ref{eqn:AbarDiff}).
+
+
+
+For Inequality (\ref{eqn:VDiff}), by Davis-Kahan Theorem, Proposition \ref{prop:eigengap} and Inequality (\ref{eqn:AbarDiff}), we have
+\begin{align*}
+	\| \bar{V}_i - V_i \|_2
+	& \le \frac{\|\bar{A} - P\|_2}{\min \{ |\lambda_i(P) - \lambda_{i+1}(P)|, |\lambda_i(P) - \lambda_{i-1}(P)| \}} \\
+    & \le \frac{\|\bar{A} - P\|_2}{\delta_d n/2} \\
+    & \le 8 \delta_d^{-1} n^{-1/2} (\log(n / \eta))^{1/2},
+\end{align*}
+where $\bar{V}_i$ represents the $i$th column of $\bar{V}$ and $V_i$ represents the $i$th column of $V$.
+\todo[inline, color=green!40]{It is not very clear here since Proposition \ref{prop:eigengap} happens with probability $1- 2d^2/n^2$.}
+Thus
+\begin{align*}
+	\|\bar{V} - V\|_F & = \left( \sum_{i=1}^d \| \bar{V}_i - V_i \|_2^2 \right)^{1/2} \\
+    & \le \left( d \cdot \left(8 \delta_d^{-1} n^{-1/2} (\log(n / \eta))^{1/2} \right)^2 \right)^{1/2} \\
+    & = 8 \delta_d^{-1} n^{-1/2} (d \log(n / \eta))^{1/2}
+\end{align*}
+
+
+
+For Inequality (\ref{eqn:XDiff}), first notice that
+\begin{align*}
+	& \|\bar{V} \bar{S}^{1/2} - V S^{1/2} \|_F \\
+    \le & \| \bar{V} \bar{S}^{1/2} - \bar{V} S^{1/2} \|_F + \| \bar{V} S^{1/2} - V S^{1/2} \|_F \\
+    = & \| \bar{V} ( \bar{S}^{1/2} - S^{1/2} ) \|_F + \| ( \bar{V} - V) S^{1/2} \|_F.
+\end{align*}
+
+By Proposition \ref{prop:AbarSquareDiff} and Weyl's inequality, we know
+\begin{align*}
+	\lambda_i^2(|\bar{A}|) - \lambda_i^2(P) = & \lambda_i(\bar{A}^2) - \lambda_i(P^2) \\
+    \le & \| \bar{A}^2 - P^2 \|_2 \\
+    \le & \| \bar{A}^2 - P^2 \|_F \\
+    \le & \sqrt{2 n^3 \log n}
+\end{align*}
+with probability greater than $1 - \frac{2}{n^2}$.
+Thus it holds with probability greater than $1 - \frac{2}{n^2}$ that
+\begin{align*}
+	& \lambda_i^{1/2}(|\bar{A}|) - \lambda_i^{1/2}(P) \\
+    = & \frac{\lambda_i^2(|\bar{A}|) - \lambda_i^2(P)}{\left(\lambda_i(|\bar{A}|) + \lambda_i(P)\right)\left(\lambda_i^{1/2}(|\bar{A}|) + \lambda_i^{1/2}(P)\right)} \\
+    \le & \frac{\sqrt{2 n^3 \log n}}{(\delta_d n)^{3/2}}
+    = \sqrt{\frac{2 \log n}{\delta_d^3}}.
+\end{align*}
+Combined with Inequality (\ref{eqn:VDiff}) and Lemma \ref{lm:Snorm}, also notice that $\delta_d \le 1$, then we have
+\begin{align*}
+	& \|\bar{V} \bar{S}^{1/2} - V S^{1/2} \|_F \\
+    \le & \| \bar{V} ( \bar{S}^{1/2} - S^{1/2} ) \|_F + \| ( \bar{V} - V) S^{1/2} \|_F \\
+    \le & \|\bar{V}\|_F \|\bar{S}^{1/2} - S^{1/2}\|_2 + \| \bar{V} - V\|_F \|S^{1/2}\|_2 \\
+    \le & \sqrt{d} \cdot \sqrt{\frac{2 \log n}{\delta_d^3}} + 8 \delta_d^{-1} n^{-1/2} (2d \log(n/\eta))^{1/2} \cdot \sqrt{n} \\
+    = & 16 \delta_d^{-3/2} (2d \log(n/\eta))^{1/2}.
+\end{align*}
+\end{proof}
+
+
+
+
+
+
+
+
+
+\begin{lemma}
+\label{lm:SDiff}
+In the setting of Lemma \ref{lm:AllDiff}, with probability greater than $1-2\eta$,
+\[
+	\|S - \bar{S}\|_F \le C \delta_d^{-2} d \log(n/\eta).
+\]
+\end{lemma}
+\textbf{Remark:} This is an extended version of Lemma 2 in \textbf{\textit{A limit theorem for scaled eigenvectors of random dot product graphs}}. \\
+\noindent
+\begin{proof}
+Replace $A$ with $\bar{A}$. Omitted here.
+\end{proof}
+
+
+
+
+
+
+
+
+\begin{lemma}
+\label{lm:VVhatDiff}
+In the setting of Lemma \ref{lm:AllDiff}, with probability greater than $1-2\eta$,
+\[
+	\|V^T \bar{V} - I \|_F \le \frac{C d \log(n/\eta)}{\delta_d^2 n}.
+\]
+\end{lemma}
+\textbf{Remark:} This is an extended version of Lemma 3 in \textbf{\textit{A limit theorem for scaled eigenvectors of random dot product graphs}}. \\
+\begin{proof}
+Replace $A$ with $\bar{A}$. Omitted here.
+\end{proof}
+
+
+
+
+
+
+
+\begin{theorem}
+\label{thm:clt}
+Let $(X, A^{(1)}, \cdots, A^{(m)}) \sim \mathrm{RDPG}(F)$ be $d$-dimensional random dot product graph, i.e., $F$ is a distribution for points in $\mathbb{R}^d$, and let $\bar{X}$ be our estimate for $X$ based on $\bar{A} = \frac{1}{m} \sum_{t = 1}^m A^{(t)}$. We assume $F$ has a diagonal second moment matrix with distinct positive entries along the diagonal. Let $\Phi(z, \Sigma)$ denote the cumulative distribution function for the multivariate normal, with mean zero and covariance matrix $\Sigma$, evaluated at $z$. Then there exists a sequence of orthogonal matrices $W_n$ converging to the identity almost surely such that for each component $i$ and any $z \in \mathbb{R}^d$,
+\[
+	\mathbb{P}\{ \sqrt{n}(W_n \bar{X}_i - X_i) \le z \} \rightarrow \int \Phi(z, \Sigma(x)) dF(x)
+\]
+where $\bar{\Sigma}(x) = \frac{1}{m} \Delta^{-1} E \left[ X_j X_j^T (x^T X_j - (x^T X_j)^2 ) \right) \Delta^{-1}$ and $\Delta = E[X_1 X_1^T]$ is the second moment matrix. That is, the sequence of random variables $\sqrt{n}(W_n \bar{X}_i - X_i)$ converges in distribution to a mixture of multivariate normals. We denote this mixture by $\mathcal{N}(0, \Sigma(X_i))$.
+\end{theorem}
+\textbf{Remark:} This is an extended version of Theorem 1 in \textbf{\textit{A limit theorem for scaled eigenvectors of random dot product graphs}}. \\
+\begin{proof}
+Let $\bar{A} V S^{-1/2} = [Y_1, \cdots, Y_n]^T$ where $Y_i \in \mathbb{R}^d$. We first show that $\sqrt{n} (Y_i - \tilde{X}_i)$ is multivariate normal in the limit. We have
+\begin{align*}
+	\sqrt{n}(Y_i - \tilde{X}_i) & = \sqrt{n} \left( (\bar{A} \tilde{X} S^{-1})^T_{\cdot i}  - (P \tilde{X} S^{-1})^T_{\cdot i}\right) \\
+    & = n S^{-1} W_n \left( \frac{1}{\sqrt{n}} \sum_{j=1}^n (\bar{A}_{ij} - P_{ij}) X_j \right) \\
+    & = n S^{-1} W_n \left( \frac{1}{\sqrt{n}} \sum_{j \ne i}(\bar{A}_{ij} - X_i^T X_j)X_j - \frac{X_i^T X_i}{\sqrt{n}} X_i \right).
+\end{align*}
+Conditioning on $X_i = x_i$, the scaled sum
+\[
+	\frac{1}{\sqrt{n}} \sum_{j \ne i}(\bar{A}_{ij} - X_i^T X_j)X_j
+\]
+is a sum of i.i.d, mean zero random variables with covariance matrix
+\[
+	\tilde{\Sigma}(x) = \frac{1}{m} E \left[ X_j X_j^T (x^T X_j - (x^T X_j)^2 ) \right).
+\]
+
+Detailed calculation for the expectation is as following:
+\begin{align*}
+	& E \left[ (\bar{A}_{ij} - x_i^T X_j) X_j \right] \\
+    = & E\left[ \frac{1}{m} \sum_{t = 1}^m A^{(t)}_{ij} X_j - (x_i^T X_j) X_j \right] \\
+    = & E\left[ E\left[ \left( \frac{1}{m} \sum_{t = 1}^m A^{(t)}_{ij} X_j - (x_i^T X_j) X_j \right) | X_j \right] \right] \\
+    = & E\left[  \frac{1}{m} \sum_{t = 1}^m (x_i^T X_j) X_j - (x_i^T X_j) X_j \right] \\
+    = & 0
+\end{align*}
+since $A_{ij}^{(t)}$ is Bernoulli with probability $x_i X_j$.
+
+Similarly, detailed calculation for the variance is as following:
+\begin{align*}
+	& Cov \left( (\bar{A}_{ij} - x_i^T X_j) X_j \right) \\
+    = & Cov \left(\bar{A}_{ij} X_j - (x_i^T X_j) X_j \right) \\
+    = & E \left[ (\bar{A}_{ij} - x_i^T X_j)^2 X_j X_j^T \right] \\
+    = & E \left[ (\bar{A}_{ij}^2 - 2 \bar{A}_{ij} x_i^T X_j + (x_i^T X_j)^2) X_j X_j^T \right] \\
+    = & E \left[ E \left[ (\bar{A}_{ij}^2 - 2 \bar{A}_{ij} x_i^T X_j + (x_i^T X_j)^2) X_j X_j^T | X_j \right] \right] \\
+    = & E \left[ E[\bar{A}_{ij}^2] X_j X_j^T - 2(x_i^T X_j) X_j X_j^T E[\bar{A}_{ij}] + (x_i^T X_j)^2 X_j X_j^T \right] \\
+    = & E \left[ (Var(\bar{A}_{ij}) + E[\bar{A}_{ij}]^2) X_j X_j^T - 2(x_i^T X_j)^2 X_j X_j^T + (x_i^T X_j)^2 X_j X_j^T \right] \\
+    = & E \left[ (\frac{1}{m} x_i^T X_j (1 - x_i^T X_j) + (x_i^T X_j)^2) X_j X_j^T - 2(x_i^T X_j)^2 X_j X_j^T + (x_i^T X_j)^2 X_j X_j^T \right] \\
+    = & \frac{1}{m} E \left[ X_j X_j^T (x_i^T X_j (1 - x_i^T X_j)) \right].
+\end{align*}
+
+
+Therefore, by the classical multivariate central limit theorem and Slutsky's theorem in the multivariate setting, we have
+\[
+	\left( \frac{1}{\sqrt{n}} \sum_{j \ne i}(\bar{A}_{ij} - x_i^T X_j) X_j - \frac{x_i^T x_i}{\sqrt{n}} x_i \right) \stackrel{\mathcal{L}}{\rightarrow} \mathcal{N}(0, \tilde{\Sigma}(x_i)).
+\]
+The strong law of large numbers ensures that $n S^{-1} = n (\tilde{X}^T \tilde{X})^{-1} \rightarrow \Delta^{-1} = (E(X_1 X_1^T))^{-1}$ almost surely. In addition,
+\[
+	\frac{1}{n} X^T X =  \frac{1}{n} W_n \tilde{X}^T \tilde{X} W_n^T = W_n (S/n) W_n^T \rightarrow W_n \Delta W_n^T
+\]
+almost surely. Thus we have $W_n \rightarrow I$ almost surely. Hence, by Slutsky's theorem in the multivariate setting, we have, conditional on $X_i = x_i$, that
+\[
+	\sqrt{n}(Y_i - \tilde{X}_i) \stackrel{\mathcal{L}}{\rightarrow} \mathcal{N}(0, \Delta^{-1} \tilde{\Sigma}(x_i) \Delta^{-1}) = \mathcal{N}(0, \bar{\Sigma}(x_i)).
+\]
+
+The rest are the same.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
